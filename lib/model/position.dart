@@ -19,23 +19,22 @@ class Position {
 
   String timePlayed() {
     int tot = 0;
-    DateTime? start = null;
-    history.forEach((element) {
+    DateTime? start;
+    for (var element in history) {
       if (element.type == 'start') {
         start = element.ts;
       }
       if (element.type == 'stop') {
-        tot += element.ts.second - (start != null ? start!.second : 0);
+        tot += element.ts.second - (start != null ? start.second : 0);
         start = null;
       }
-    });
+    }
     if (start != null) {
-      tot += DateTime.now().second - (start != null ? start!.second : 0);
+      tot += DateTime.now().second - start.second;
     }
 
-    return "$tot";
-    // final rightNow = DateTime.now();
-    // return DateFormat('mm:ss').format(rightNow);
+    final rightNow = DateTime.fromMillisecondsSinceEpoch(tot * 1000);
+    return DateFormat('mm:ss').format(rightNow);
   }
 
   void startPlay() {

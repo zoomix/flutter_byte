@@ -78,12 +78,13 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class DiamondWidget extends StatefulWidget {
-  DiamondWidget({super.key, this.top, this.left, this.right, this.defender});
+  const DiamondWidget(
+      {super.key, this.top, this.left, this.right, this.defender});
 
-  Position? top;
-  Position? left;
-  Position? right;
-  Position? defender;
+  final Position? top;
+  final Position? left;
+  final Position? right;
+  final Position? defender;
 
   @override
   State<DiamondWidget> createState() => _DiamondWidgetState();
@@ -105,7 +106,8 @@ class _DiamondWidgetState extends State<DiamondWidget> {
           ),
         ),
         PositionWidget(pos: widget.defender),
-        ElevatedButton(onPressed: widget.top?.stopPlay, child: Text('BYTE!'))
+        ElevatedButton(
+            onPressed: widget.top?.stopPlay, child: const Text('BYTE!'))
       ],
     );
   }
@@ -131,21 +133,23 @@ class _PositionWidgetState extends State<PositionWidget> {
           Container(
             height: 64,
             width: 64,
-            decoration:
-                BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+            decoration: const BoxDecoration(
+                color: Colors.green, shape: BoxShape.circle),
             alignment: Alignment.center,
             child: Text(
               widget.pos != null ? widget.pos!.person!.initials : 'As',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Anna Panna', style: TextStyle(fontSize: 16)),
-              TimerBuilder.periodic(Duration(seconds: 1), builder: (context) {
+              Text("${widget.pos?.person?.name}",
+                  style: const TextStyle(fontSize: 16)),
+              TimerBuilder.periodic(const Duration(seconds: 1),
+                  builder: (context) {
                 return Text('${widget.pos?.timePlayed()}',
-                    style: TextStyle(fontSize: 24));
+                    style: const TextStyle(fontSize: 24));
               }),
             ],
           )
