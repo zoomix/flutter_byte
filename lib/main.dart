@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lag_byte/model/person.dart';
 import 'package:lag_byte/model/position.dart';
+import 'package:timer_builder/timer_builder.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,15 +18,23 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'Byte!'),
+      home: MyHomePage(title: 'Byte!'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  MyHomePage({super.key, required this.title});
 
   final String title;
+  final Position? top = const Position(
+      pos: 'top', person: Person(id: 1, name: 'Apa Bepa', initials: 'AB'));
+  final Position? left = const Position(
+      pos: 'top', person: Person(id: 2, name: 'Cepa Depa', initials: 'CD'));
+  final Position? right = const Position(
+      pos: 'top', person: Person(id: 3, name: 'Epa Fepa', initials: 'EF'));
+  final Position? defender = const Position(
+      pos: 'top', person: Person(id: 4, name: 'Gepa Hepa', initials: 'GH'));
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -40,7 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[const DiamondWidget()],
+          children: <Widget>[
+            DiamondWidget(
+              top: widget.top,
+              left: widget.left,
+              right: widget.right,
+              defender: widget.defender,
+            )
+          ],
         ),
       ),
     );
@@ -48,13 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class DiamondWidget extends StatefulWidget {
-  const DiamondWidget(
-      {super.key, this.top, this.left, this.right, this.defender});
+  DiamondWidget({super.key, this.top, this.left, this.right, this.defender});
 
-  final Position? top;
-  final Position? left;
-  final Position? right;
-  final Position? defender;
+  Position? top;
+  Position? left;
+  Position? right;
+  Position? defender;
 
   @override
   State<DiamondWidget> createState() => _DiamondWidgetState();
@@ -64,17 +80,18 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        PositionWidget(),
+        PositionWidget(pos: widget.top),
         Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [PositionWidget(), PositionWidget()],
+            children: [
+              PositionWidget(pos: widget.left),
+              PositionWidget(pos: widget.right)
+            ],
           ),
         ),
-        PositionWidget(),
+        PositionWidget(pos: widget.defender),
       ],
     );
   }
@@ -103,16 +120,19 @@ class _PositionWidgetState extends State<PositionWidget> {
             decoration:
                 BoxDecoration(color: Colors.green, shape: BoxShape.circle),
             alignment: Alignment.center,
-            child: const Text(
-              'SJ',
-              style: TextStyle(fontSize: 32),
+            child: Text(
+              widget.pos != null ? widget.pos!.person!.initials : 'As',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text('Anna Panna', style: TextStyle(fontSize: 16)),
-              Text('08:12', style: TextStyle(fontSize: 24)),
+              TimerBuilder.periodic(Duration(seconds: 1), builder: (context) {
+                return Text('${widget.pos?.timePlayed()}',
+                    style: TextStyle(fontSize: 24));
+              }),
             ],
           )
         ],

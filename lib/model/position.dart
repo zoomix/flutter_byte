@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:lag_byte/model/person.dart';
 
 class Position {
@@ -13,5 +14,10 @@ class Position {
   @override
   String toString() {
     return 'Position{pos: $pos, person: $person}';
+  }
+
+  String timePlayed() {
+    final rightNow = DateTime.now();
+    return DateFormat('mm:ss').format(rightNow);
   }
 }
