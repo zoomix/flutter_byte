@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lag_byte/model/position.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -10,11 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Byte',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Byte!'),
     );
   }
 }
@@ -29,14 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,23 +39,84 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[const DiamondWidget()],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class DiamondWidget extends StatefulWidget {
+  const DiamondWidget(
+      {super.key, this.top, this.left, this.right, this.defender});
+
+  final Position? top;
+  final Position? left;
+  final Position? right;
+  final Position? defender;
+
+  @override
+  State<DiamondWidget> createState() => _DiamondWidgetState();
+}
+
+class _DiamondWidgetState extends State<DiamondWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        PositionWidget(),
+        Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [PositionWidget(), PositionWidget()],
+          ),
+        ),
+        PositionWidget(),
+      ],
+    );
+  }
+}
+
+class PositionWidget extends StatefulWidget {
+  const PositionWidget({super.key, this.pos});
+
+  final Position? pos;
+
+  @override
+  State<PositionWidget> createState() => _PositionWidgetState();
+}
+
+class _PositionWidgetState extends State<PositionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: 64,
+            width: 64,
+            decoration:
+                BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: const Text(
+              'SJ',
+              style: TextStyle(fontSize: 32),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('Anna Panna', style: TextStyle(fontSize: 16)),
+              Text('08:12', style: TextStyle(fontSize: 24)),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
