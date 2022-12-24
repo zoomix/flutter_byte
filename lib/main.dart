@@ -27,20 +27,33 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title});
 
   final String title;
-  final Position? top = const Position(
-      pos: 'top', person: Person(id: 1, name: 'Apa Bepa', initials: 'AB'));
-  final Position? left = const Position(
-      pos: 'top', person: Person(id: 2, name: 'Cepa Depa', initials: 'CD'));
-  final Position? right = const Position(
-      pos: 'top', person: Person(id: 3, name: 'Epa Fepa', initials: 'EF'));
-  final Position? defender = const Position(
-      pos: 'top', person: Person(id: 4, name: 'Gepa Hepa', initials: 'GH'));
+  final Position? top = Position(
+      pos: 'top',
+      person: const Person(id: 1, name: 'Apa Bepa', initials: 'AB'));
+  final Position? left = Position(
+      pos: 'top',
+      person: const Person(id: 2, name: 'Cepa Depa', initials: 'CD'));
+  final Position? right = Position(
+      pos: 'top',
+      person: const Person(id: 3, name: 'Epa Fepa', initials: 'EF'));
+  final Position? defender = Position(
+      pos: 'top',
+      person: const Person(id: 4, name: 'Gepa Hepa', initials: 'GH'));
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    widget.top?.startPlay();
+    widget.left?.startPlay();
+    widget.right?.startPlay();
+    widget.defender?.startPlay();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +105,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
           ),
         ),
         PositionWidget(pos: widget.defender),
+        ElevatedButton(onPressed: widget.top?.stopPlay, child: Text('BYTE!'))
       ],
     );
   }
