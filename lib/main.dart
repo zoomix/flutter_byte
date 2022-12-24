@@ -130,12 +130,11 @@ class _PositionWidgetState extends State<PositionWidget> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${widget.pos == null ? '' : widget.pos?.person.name}",
+              Text(widget.pos?.person.name ?? '',
                   style: const TextStyle(fontSize: 16)),
               TimerBuilder.periodic(const Duration(seconds: 1),
                   builder: (context) {
-                return Text(
-                    '${widget.pos == null ? '--:--' : widget.pos!.timePlayed()}',
+                return Text(widget.pos?.timePlayed() ?? '--:--',
                     style: const TextStyle(fontSize: 24));
               }),
             ],
