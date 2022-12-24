@@ -27,24 +27,15 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title});
 
   final String title;
-  final Position? top = Position(
-      pos: 'top',
-      person: const Person(id: 1, name: 'Apa Bepa', initials: 'AB'));
-  final Position? left = Position(
-      pos: 'top',
-      person: const Person(id: 2, name: 'Cepa Depa', initials: 'CD'));
-  final Position? right = Position(
-      pos: 'top',
-      person: const Person(id: 3, name: 'Epa Fepa', initials: 'EF'));
-  final Position? defender = Position(
-      pos: 'top',
-      person: const Person(id: 4, name: 'Gepa Hepa', initials: 'GH'));
 
-  final people = const [
-    Person(id: 1, name: 'Apa Bepa', initials: 'AB'),
-    Person(id: 2, name: 'Cepa Depa', initials: 'CD'),
-    Person(id: 3, name: 'Epa Fepa', initials: 'EF'),
-    Person(id: 4, name: 'Gepa Hepa', initials: 'GH'),
+  final positions = [
+    Position(pos: '', person: Person(id: 1, name: 'Apa Bepa', initials: 'AB')),
+    Position(pos: '', person: Person(id: 2, name: 'Cepa Depa', initials: 'CD')),
+    Position(pos: '', person: Person(id: 3, name: 'Epa Fepa', initials: 'EF')),
+    Position(pos: '', person: Person(id: 4, name: 'Gepa Hepa', initials: 'GH')),
+    Position(pos: '', person: Person(id: 5, name: 'Ipa Jipa', initials: 'IJ')),
+    Position(pos: '', person: Person(id: 6, name: 'Kipa Lipa', initials: 'KL')),
+    Position(pos: '', person: Person(id: 7, name: 'Mipa Nipa', initials: 'MN')),
   ];
 
   @override
@@ -52,15 +43,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  @override
-  void initState() {
-    super.initState();
-    widget.top?.startPlay();
-    widget.left?.startPlay();
-    widget.right?.startPlay();
-    widget.defender?.startPlay();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,13 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            DiamondWidget(
-              top: widget.top,
-              left: widget.left,
-              right: widget.right,
-              defender: widget.defender,
-            ),
-            PersonList(people: widget.people),
+            DiamondWidget(),
+            PersonList(positions: widget.positions),
           ],
         ),
       ),
@@ -86,13 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class DiamondWidget extends StatefulWidget {
-  const DiamondWidget(
-      {super.key, this.top, this.left, this.right, this.defender});
+  DiamondWidget({super.key, this.top, this.left, this.right, this.defender});
 
-  final Position? top;
-  final Position? left;
-  final Position? right;
-  final Position? defender;
+  Position? top;
+  Position? left;
+  Position? right;
+  Position? defender;
 
   @override
   State<DiamondWidget> createState() => _DiamondWidgetState();
@@ -147,18 +123,19 @@ class _PositionWidgetState extends State<PositionWidget> {
                 color: Colors.green, shape: BoxShape.circle),
             alignment: Alignment.center,
             child: Text(
-              widget.pos != null ? widget.pos!.person!.initials : 'As',
+              widget.pos != null ? widget.pos!.person.initials : '-',
               style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${widget.pos?.person?.name}",
+              Text("${widget.pos == null ? '' : widget.pos?.person.name}",
                   style: const TextStyle(fontSize: 16)),
               TimerBuilder.periodic(const Duration(seconds: 1),
                   builder: (context) {
-                return Text('${widget.pos?.timePlayed()}',
+                return Text(
+                    '${widget.pos == null ? '--:--' : widget.pos!.timePlayed()}',
                     style: const TextStyle(fontSize: 24));
               }),
             ],
@@ -170,9 +147,9 @@ class _PositionWidgetState extends State<PositionWidget> {
 }
 
 class PersonList extends StatefulWidget {
-  const PersonList({super.key, required this.people});
+  const PersonList({super.key, required this.positions});
 
-  final List<Person> people;
+  final List<Position> positions;
 
   @override
   State<PersonList> createState() => _PersonListState();
@@ -185,17 +162,25 @@ class _PersonListState extends State<PersonList> {
       child: ListView.builder(itemBuilder: (context, i) {
         final index = i ~/ 2;
 
-        if (index >= widget.people.length) {
+        if (index >= widget.positions.length) {
           return const Text(' ');
         }
         if (i % 2 == 1) {
           return const Divider();
         }
 
-        final personName = widget.people[index].name;
+        final position = widget.positions[index];
+        final personName = position.person.name;
         const timePlayed = "00:00";
         return ListTile(
-          leading: const Icon(Icons.check_box_outline_blank),
+          leading: Checkbox(
+            value: position.nextUp,
+            onChanged: (value) {
+              setState(() {
+                position.setNextUp(value ?? false);
+              });
+            },
+          ),
           title: Text(
             "$timePlayed $personName",
             style: const TextStyle(fontSize: 18),

@@ -3,13 +3,14 @@ import 'package:lag_byte/model/person.dart';
 
 class Position {
   final String pos;
-  final Person? person;
+  final Person person;
   final List<PlayEvent> history = [];
+  bool nextUp = false;
 
-  Position({required this.pos, this.person});
+  Position({required this.pos, required this.person});
 
   Map<String, dynamic> toMap() {
-    return {'pos': pos, 'person': person?.id};
+    return {'pos': pos, 'person': person.id};
   }
 
   @override
@@ -43,6 +44,10 @@ class Position {
 
   void stopPlay() {
     history.add(PlayEvent(type: "stop", ts: DateTime.now()));
+  }
+
+  void setNextUp(bool value) {
+    nextUp = value;
   }
 }
 
