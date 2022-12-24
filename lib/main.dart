@@ -40,6 +40,13 @@ class MyHomePage extends StatefulWidget {
       pos: 'top',
       person: const Person(id: 4, name: 'Gepa Hepa', initials: 'GH'));
 
+  final people = const [
+    Person(id: 1, name: 'Apa Bepa', initials: 'AB'),
+    Person(id: 2, name: 'Cepa Depa', initials: 'CD'),
+    Person(id: 3, name: 'Epa Fepa', initials: 'EF'),
+    Person(id: 4, name: 'Gepa Hepa', initials: 'GH'),
+  ];
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -69,7 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
               left: widget.left,
               right: widget.right,
               defender: widget.defender,
-            )
+            ),
+            PersonList(people: widget.people),
           ],
         ),
       ),
@@ -107,7 +115,9 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         ),
         PositionWidget(pos: widget.defender),
         ElevatedButton(
-            onPressed: widget.top?.stopPlay, child: const Text('BYTE!'))
+          onPressed: widget.top?.stopPlay,
+          child: const Text('BYTE!'),
+        ),
       ],
     );
   }
@@ -155,6 +165,48 @@ class _PositionWidgetState extends State<PositionWidget> {
           )
         ],
       ),
+    );
+  }
+}
+
+class PersonList extends StatefulWidget {
+  const PersonList({super.key, required this.people});
+
+  final List<Person> people;
+
+  @override
+  State<PersonList> createState() => _PersonListState();
+}
+
+class _PersonListState extends State<PersonList> {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(itemBuilder: (context, i) {
+        final index = i ~/ 2;
+
+        if (index >= widget.people.length) {
+          return const Text(' ');
+        }
+        if (i % 2 == 1) {
+          return const Divider();
+        }
+
+        final personName = widget.people[index].name;
+        const timePlayed = "00:00";
+        return ListTile(
+          leading: const Icon(Icons.check_box_outline_blank),
+          title: Text(
+            "$timePlayed $personName",
+            style: const TextStyle(fontSize: 18),
+          ),
+          trailing: const Icon(
+            Icons.arrow_upward,
+            color: Colors.red,
+            semanticLabel: "Position",
+          ),
+        );
+      }),
     );
   }
 }
