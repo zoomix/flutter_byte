@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lag_byte/model/person.dart';
 import 'package:lag_byte/model/position.dart';
+import 'package:lag_byte/utils.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 void main() {
@@ -96,17 +97,33 @@ class DiamondWidget extends StatefulWidget {
 class _DiamondWidgetState extends State<DiamondWidget> {
   final top = PositionWidget(pos: null);
   final left = PositionWidget(pos: null);
-  final righ = PositionWidget(pos: null);
+  final right = PositionWidget(pos: null);
   final defender = PositionWidget(pos: null);
 
   void doByte() {
-    var outgoing = widget.positions[2];
-    setState(() {
-      top.pos?.stopPlay();
-      left.pos = widget.positions[2];
-      left.pos?.startPlay();
-    });
-    widget.handleByte(outgoing, top.pos);
+    var positionWidgetIndex = 0;
+    final positionWidgets = [top, left, right, defender];
+    final positionChanges = <Tuple<Position, Position?>>[];
+
+    for (var pos in widget.positions) {
+      if (pos.nextUp) {
+        final PositionWidget positionWidget =
+            positionWidgets[positionWidgetIndex];
+        positionWidgetIndex++;
+        positionChanges.add(Tuple(item1: pos, item2: positionWidget.pos));
+      }
+    }
+
+    positionWidgetIndex = 0;
+    for (var positionChange in positionChanges) {
+      setState(() {
+        positionChange.item2?.stopPlay();
+        widget.handleByte(positionChange.item1, positionChange.item2);
+        positionWidgets[positionWidgetIndex].pos = positionChange.item1;
+        positionWidgetIndex++;
+        positionChange.item1.startPlay();
+      });
+    }
   }
 
   @override
@@ -117,7 +134,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [left, righ],
+            children: [left, right],
           ),
         ),
         defender,
