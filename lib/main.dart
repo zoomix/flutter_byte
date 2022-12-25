@@ -215,11 +215,18 @@ class _PersonListState extends State<PersonList> {
         });
   }
 
-  Widget _trailing() {
-    return const Icon(
-      Icons.arrow_upward,
-      color: Colors.red,
-      semanticLabel: "Position",
+  Widget _trailing(Position position) {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          position.togglePosition();
+        });
+      },
+      icon: Icon(
+        position.getIcon(),
+        color: Colors.red,
+        semanticLabel: "Position",
+      ),
     );
   }
 
@@ -245,7 +252,7 @@ class _PersonListState extends State<PersonList> {
             "$timePlayed $personName",
             style: const TextStyle(fontSize: 18),
           ),
-          trailing: _trailing(),
+          trailing: _trailing(position),
         );
       }),
     );

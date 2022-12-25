@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lag_byte/model/person.dart';
 
 class Position {
-  final String pos;
+  String pos;
   final Person person;
   final List<PlayEvent> history = [];
   bool nextUp = false;
@@ -48,6 +49,33 @@ class Position {
 
   void setNextUp(bool value) {
     nextUp = value;
+  }
+
+  void togglePosition() {
+    if (pos == 'right') {
+      pos = 'defender';
+    } else if (pos == 'defender') {
+      pos = 'left';
+    } else if (pos == 'left') {
+      pos = 'top';
+    } else {
+      pos = 'right';
+    }
+  }
+
+  IconData getIcon() {
+    switch (pos) {
+      case 'top':
+        return Icons.arrow_circle_up_outlined;
+      case 'left':
+        return Icons.arrow_circle_left_outlined;
+      case 'right':
+        return Icons.arrow_circle_right_outlined;
+      case 'defender':
+        return Icons.arrow_circle_down_outlined;
+      default:
+        return Icons.arrow_circle_up_outlined;
+    }
   }
 }
 
