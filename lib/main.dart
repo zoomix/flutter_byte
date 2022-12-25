@@ -100,27 +100,35 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   final right = PositionWidget(pos: null);
   final defender = PositionWidget(pos: null);
 
+  var diamondShape = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    diamondShape = {
+      'top': top,
+      'left': left,
+      'right': right,
+      'defender': defender
+    };
+  }
+
   void doByte() {
-    var positionWidgetIndex = 0;
-    final positionWidgets = [top, left, right, defender];
     final positionChanges = <Tuple<Position, Position?>>[];
 
-    for (var pos in widget.positions) {
-      if (pos.nextUp) {
-        final PositionWidget positionWidget =
-            positionWidgets[positionWidgetIndex];
-        positionWidgetIndex++;
-        positionChanges.add(Tuple(item1: pos, item2: positionWidget.pos));
+    for (var position in widget.positions) {
+      if (position.nextUp) {
+        var positionWidget = diamondShape[position.pos];
+        diamondShape[position.pos].pos = position;
+        positionChanges.add(Tuple(item1: position, item2: positionWidget.pos));
       }
     }
 
-    positionWidgetIndex = 0;
     for (var positionChange in positionChanges) {
       setState(() {
         positionChange.item2?.stopPlay();
         widget.handleByte(positionChange.item1, positionChange.item2);
-        positionWidgets[positionWidgetIndex].pos = positionChange.item1;
-        positionWidgetIndex++;
         positionChange.item1.startPlay();
         positionChange.item2?.nextUp = false;
       });
