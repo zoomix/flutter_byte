@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lag_byte/edit_persons.dart';
 import 'package:lag_byte/model/person.dart';
 import 'package:lag_byte/model/position.dart';
 import 'package:lag_byte/utils.dart';
@@ -16,9 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Byte',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
+      theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
       home: MyHomePage(title: 'Byte!'),
     );
   }
@@ -67,11 +66,34 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _onAddPerson(Position position) {}
+  void _onRemovePerson(Position position) {
+    setState(() {
+      widget.positions.remove(position);
+    });
+  }
+
+  void _pushEditPersons() {
+    final materialPageRoute = myEditPersons(
+      widget.positions,
+      _onAddPerson,
+      _onRemovePerson,
+    );
+    Navigator.of(context).push(materialPageRoute);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _pushEditPersons,
+            tooltip: 'Edit persons',
+          ),
+        ],
       ),
       body: Center(
         child: Column(
