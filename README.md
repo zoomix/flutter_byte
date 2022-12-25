@@ -13,7 +13,7 @@ Keep track of who's played the longest and at what positions.
 - [ ] Goalkeeper
 - [ ] History of positions
 - [ ] Outline on players about to be replaced
-- [ ] Sort list of players by revers time played
+- [x] Sort list of players by time played, ascending
 - [ ] Warn if multiple selected players have the same position
 
 
