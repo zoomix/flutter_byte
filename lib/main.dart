@@ -107,7 +107,6 @@ class _DiamondWidgetState extends State<DiamondWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     diamondShape = {
       'top': top,
@@ -115,6 +114,20 @@ class _DiamondWidgetState extends State<DiamondWidget> {
       'right': right,
       'defender': defender
     };
+    _suggestPositions();
+  }
+
+  void _suggestPositions() {
+    Position? lastPosition;
+    int nofNextUps = 0;
+    for (var position in widget.positions) {
+      if (lastPosition != null) {
+        position.pos = lastPosition.pos;
+        position.togglePosition();
+      }
+      lastPosition = position;
+      position.nextUp = (4 > nofNextUps++);
+    }
   }
 
   void doByte() {
@@ -135,8 +148,13 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         widget.handleByte(positionChange.item1, positionChange.item2);
         positionChange.item1.startPlay();
         positionChange.item2?.nextUp = false;
+        positionChange.item2?.togglePosition();
       });
     }
+
+    setState(() {
+      _suggestPositions();
+    });
   }
 
   @override
