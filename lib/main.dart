@@ -219,7 +219,7 @@ class _PersonListState extends State<PersonList> {
 
         final position = widget.positions[index];
         final personName = position.person.name;
-        const timePlayed = "00:00";
+        final timePlayed = position.timePlayed();
         return ListTile(
           leading: Checkbox(
             value: position.nextUp,
