@@ -54,6 +54,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  void _handleByte(Position incoming, Position? outgoing) {
+    setState(() {
+      widget.positions.remove(incoming);
+      if (outgoing != null) {
+        widget.positions.add(outgoing);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            DiamondWidget(),
+            DiamondWidget(positions: widget.positions, handleByte: _handleByte),
             PersonList(positions: widget.positions),
           ],
         ),
@@ -74,35 +83,46 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class DiamondWidget extends StatefulWidget {
-  DiamondWidget({super.key, this.top, this.left, this.right, this.defender});
+  const DiamondWidget(
+      {super.key, required this.positions, required this.handleByte});
 
-  Position? top;
-  Position? left;
-  Position? right;
-  Position? defender;
+  final List<Position> positions;
+  final Function handleByte;
 
   @override
   State<DiamondWidget> createState() => _DiamondWidgetState();
 }
 
 class _DiamondWidgetState extends State<DiamondWidget> {
+  final top = PositionWidget(pos: null);
+  final left = PositionWidget(pos: null);
+  final righ = PositionWidget(pos: null);
+  final defender = PositionWidget(pos: null);
+
+  void doByte() {
+    var outgoing = widget.positions[2];
+    setState(() {
+      top.pos?.stopPlay();
+      left.pos = widget.positions[2];
+      left.pos?.startPlay();
+    });
+    widget.handleByte(outgoing, top.pos);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        PositionWidget(pos: widget.top),
+        top,
         Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              PositionWidget(pos: widget.left),
-              PositionWidget(pos: widget.right)
-            ],
+            children: [left, righ],
           ),
         ),
-        PositionWidget(pos: widget.defender),
+        defender,
         ElevatedButton(
-          onPressed: widget.top?.stopPlay,
+          onPressed: doByte,
           child: const Text('BYTE!'),
         ),
       ],
@@ -111,47 +131,48 @@ class _DiamondWidgetState extends State<DiamondWidget> {
 }
 
 class PositionWidget extends StatefulWidget {
-  const PositionWidget({super.key, this.pos});
+  PositionWidget({super.key, this.pos});
 
-  final Position? pos;
+  Position? pos;
 
   @override
   State<PositionWidget> createState() => _PositionWidgetState();
 }
 
 class _PositionWidgetState extends State<PositionWidget> {
+  final initalsFont =
+      const TextStyle(fontSize: 32, fontWeight: FontWeight.bold);
+  final nameFont = const TextStyle(fontSize: 16);
+  final timeFont = const TextStyle(fontSize: 24);
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 64,
-            width: 64,
-            decoration: const BoxDecoration(
-                color: Colors.green, shape: BoxShape.circle),
-            alignment: Alignment.center,
-            child: Text(
-              widget.pos != null ? widget.pos!.person.initials : '-',
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      child:
+          TimerBuilder.periodic(const Duration(seconds: 1), builder: (context) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 64,
+              width: 64,
+              decoration: const BoxDecoration(
+                  color: Colors.green, shape: BoxShape.circle),
+              alignment: Alignment.center,
+              child:
+                  Text(widget.pos?.person.initials ?? '-', style: initalsFont),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(widget.pos?.person.name ?? '',
-                  style: const TextStyle(fontSize: 16)),
-              TimerBuilder.periodic(const Duration(seconds: 1),
-                  builder: (context) {
-                return Text(widget.pos?.timePlayed() ?? '--:--',
-                    style: const TextStyle(fontSize: 24));
-              }),
-            ],
-          )
-        ],
-      ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.pos?.person.name ?? '', style: nameFont),
+                Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont),
+              ],
+            )
+          ],
+        );
+      }),
     );
   }
 }
