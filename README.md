@@ -5,9 +5,11 @@ Keep track of who's played the longest and at what positions.
 
 ## Todo
 
-- [ ] Add people
-- [ ] Store people locally
-- [ ] Drop player
+- [x] Add Person
+- [ ] Store Person locally
+- [x] Drop Person
+- [ ] Rename Person to Player
+- [ ] On edit page, list all Players not just Non-engaged players. 
 - [ ] Goalkeeper
 - [ ] History of positions
 - [ ] Outline on players about to be replaced

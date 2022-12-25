@@ -28,28 +28,28 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
-  final positions = [
-    Position(
-        pos: 'top',
-        person: const Person(id: 1, name: 'Apa Bepa', initials: 'AB')),
-    Position(
-        pos: 'top',
-        person: const Person(id: 2, name: 'Cepa Depa', initials: 'CD')),
-    Position(
-        pos: 'top',
-        person: const Person(id: 3, name: 'Epa Fepa', initials: 'EF')),
-    Position(
-        pos: 'top',
-        person: const Person(id: 4, name: 'Gepa Hepa', initials: 'GH')),
-    Position(
-        pos: 'top',
-        person: const Person(id: 5, name: 'Ipa Jipa', initials: 'IJ')),
-    Position(
-        pos: 'top',
-        person: const Person(id: 6, name: 'Kipa Lipa', initials: 'KL')),
-    Position(
-        pos: 'top',
-        person: const Person(id: 7, name: 'Mipa Nipa', initials: 'MN')),
+  final positions = <Position>[
+    // Position(
+    //     pos: 'top',
+    //     person: const Person(id: 1, name: 'Apa Bepa', initials: 'AB')),
+    // Position(
+    //     pos: 'top',
+    //     person: const Person(id: 2, name: 'Cepa Depa', initials: 'CD')),
+    // Position(
+    //     pos: 'top',
+    //     person: const Person(id: 3, name: 'Epa Fepa', initials: 'EF')),
+    // Position(
+    //     pos: 'top',
+    //     person: const Person(id: 4, name: 'Gepa Hepa', initials: 'GH')),
+    // Position(
+    //     pos: 'top',
+    //     person: const Person(id: 5, name: 'Ipa Jipa', initials: 'IJ')),
+    // Position(
+    //     pos: 'top',
+    //     person: const Person(id: 6, name: 'Kipa Lipa', initials: 'KL')),
+    // Position(
+    //     pos: 'top',
+    //     person: const Person(id: 7, name: 'Mipa Nipa', initials: 'MN')),
   ];
 
   @override
@@ -66,7 +66,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _onAddPerson(Position position) {}
+  void _onAddPerson(Position position) {
+    setState(() {
+      widget.positions.add(position);
+    });
+  }
+
   void _onRemovePerson(Position position) {
     setState(() {
       widget.positions.remove(position);
