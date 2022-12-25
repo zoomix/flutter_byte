@@ -123,8 +123,9 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     for (var position in widget.positions) {
       if (position.nextUp) {
         var positionWidget = diamondShape[position.pos];
+        var outgoing = positionWidget.pos;
         diamondShape[position.pos].pos = position;
-        positionChanges.add(Tuple(item1: position, item2: positionWidget.pos));
+        positionChanges.add(Tuple(item1: position, item2: outgoing));
       }
     }
 
