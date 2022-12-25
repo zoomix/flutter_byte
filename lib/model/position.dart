@@ -26,17 +26,17 @@ class Position {
       if (element.type == 'start') {
         start = element.ts;
       }
-      if (element.type == 'stop') {
-        tot += element.ts.second - (start != null ? start.second : 0);
+      if (element.type == 'stop' && start != null) {
+        tot += element.ts.difference(start).inSeconds;
         start = null;
       }
     }
     if (start != null) {
-      tot += DateTime.now().second - start.second;
+      tot += DateTime.now().difference(start).inSeconds;
     }
 
-    final rightNow = DateTime.fromMillisecondsSinceEpoch(tot * 1000);
-    return DateFormat('mm:ss').format(rightNow);
+    final nf = NumberFormat("00");
+    return "${nf.format(tot ~/ 60)}:${nf.format(tot % 60)}";
   }
 
   void startPlay() {
