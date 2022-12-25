@@ -122,6 +122,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         positionWidgets[positionWidgetIndex].pos = positionChange.item1;
         positionWidgetIndex++;
         positionChange.item1.startPlay();
+        positionChange.item2?.nextUp = false;
       });
     }
   }
