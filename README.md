@@ -1,6 +1,20 @@
 # lag_byte
 
-A new Flutter project.
+Keep track of who's played the longest and at what positions. 
+
+
+## Todo
+
+- [ ] Add people
+- [ ] Store people locally
+- [ ] Drop player
+- [ ] Goalkeeper
+- [ ] History of positions
+- [ ] Outline on players about to be replaced
+- [ ] Sort list of players by revers time played
+- [ ] Warn if multiple selected players have the same position
+
+
 
 ## Getting Started
 
