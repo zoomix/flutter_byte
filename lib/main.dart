@@ -205,6 +205,24 @@ class PersonList extends StatefulWidget {
 }
 
 class _PersonListState extends State<PersonList> {
+  Widget _leading(Position position) {
+    return Checkbox(
+        value: position.nextUp,
+        onChanged: (value) {
+          setState(() {
+            position.setNextUp(value ?? false);
+          });
+        });
+  }
+
+  Widget _trailing() {
+    return const Icon(
+      Icons.arrow_upward,
+      color: Colors.red,
+      semanticLabel: "Position",
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -222,23 +240,12 @@ class _PersonListState extends State<PersonList> {
         final personName = position.person.name;
         final timePlayed = position.timePlayed();
         return ListTile(
-          leading: Checkbox(
-            value: position.nextUp,
-            onChanged: (value) {
-              setState(() {
-                position.setNextUp(value ?? false);
-              });
-            },
-          ),
+          leading: _leading(position),
           title: Text(
             "$timePlayed $personName",
             style: const TextStyle(fontSize: 18),
           ),
-          trailing: const Icon(
-            Icons.arrow_upward,
-            color: Colors.red,
-            semanticLabel: "Position",
-          ),
+          trailing: _trailing(),
         );
       }),
     );
