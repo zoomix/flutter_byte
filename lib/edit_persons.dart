@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lag_byte/model/person.dart';
-import 'package:lag_byte/model/position.dart';
+import 'package:lag_byte/model/player.dart';
+import 'package:lag_byte/model/diamond_position.dart';
 
 MaterialPageRoute myEditPersons(
-  List<Position> positions,
+  List<DiamondPosition> positions,
   Function onAdd,
   Function onRemove,
 ) {
@@ -25,7 +25,7 @@ class ListWrapper extends StatefulWidget {
       required this.onAdd,
       required this.onRemove});
 
-  final List<Position> positions;
+  final List<DiamondPosition> positions;
   final Function onRemove;
   final Function onAdd;
 
@@ -50,9 +50,9 @@ class _ListWrapperState extends State<ListWrapper> {
                 .split(" ")
                 .map((namePart) => namePart[0].toUpperCase())
                 .join('');
-            final newPerson = Position(
+            final newPerson = DiamondPosition(
                 pos: 'top',
-                person: Person(id: 123, name: newName, initials: initials));
+                player: Player(id: 123, name: newName, initials: initials));
             setState(() {
               widget.onAdd(newPerson);
             });
@@ -60,7 +60,6 @@ class _ListWrapperState extends State<ListWrapper> {
         },
       ),
     );
-    ;
   }
 }
 
@@ -109,7 +108,7 @@ class EditPersonsWidget extends StatefulWidget {
   const EditPersonsWidget(
       {super.key, required this.positions, required this.onRemove});
 
-  final List<Position> positions;
+  final List<DiamondPosition> positions;
   final Function onRemove;
 
   @override
@@ -117,7 +116,7 @@ class EditPersonsWidget extends StatefulWidget {
 }
 
 class _EditPersonsWidgetState extends State<EditPersonsWidget> {
-  void _onRemovePosition(Position position) {
+  void _onRemovePosition(DiamondPosition position) {
     setState(() {
       widget.positions.remove(position);
       widget.onRemove(position);
@@ -143,13 +142,13 @@ class EditPersonWidget extends StatelessWidget {
   const EditPersonWidget(
       {super.key, required this.position, required this.onRemove});
 
-  final Position position;
+  final DiamondPosition position;
   final Function onRemove;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(position.person.name),
+      title: Text(position.player.name),
       trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: (() {

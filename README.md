@@ -8,7 +8,7 @@ Keep track of who's played the longest and at what positions.
 - [x] Add Person
 - [ ] Store Person locally
 - [x] Drop Person
-- [ ] Rename Person to Player
+- [x] Rename Person to Player. Position to DiamondPosition
 - [ ] Select Players for match
 - [ ] On edit page, list all Players not just Non-engaged players. 
 - [ ] Goalkeeper

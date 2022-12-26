@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lag_byte/edit_persons.dart';
-import 'package:lag_byte/model/person.dart';
-import 'package:lag_byte/model/position.dart';
+import 'package:lag_byte/model/player.dart';
+import 'package:lag_byte/model/diamond_position.dart';
 import 'package:lag_byte/utils.dart';
 import 'package:timer_builder/timer_builder.dart';
 
@@ -28,28 +28,28 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
-  final positions = <Position>[
-    Position(
+  final positions = <DiamondPosition>[
+    DiamondPosition(
         pos: 'top',
-        person: const Person(id: 1, name: 'Apa Bepa', initials: 'AB')),
-    Position(
+        player: const Player(id: 1, name: 'Apa Bepa', initials: 'AB')),
+    DiamondPosition(
         pos: 'top',
-        person: const Person(id: 2, name: 'Cepa Depa', initials: 'CD')),
-    Position(
+        player: const Player(id: 2, name: 'Cepa Depa', initials: 'CD')),
+    DiamondPosition(
         pos: 'top',
-        person: const Person(id: 3, name: 'Epa Fepa', initials: 'EF')),
-    Position(
+        player: const Player(id: 3, name: 'Epa Fepa', initials: 'EF')),
+    DiamondPosition(
         pos: 'top',
-        person: const Person(id: 4, name: 'Gepa Hepa', initials: 'GH')),
-    Position(
+        player: const Player(id: 4, name: 'Gepa Hepa', initials: 'GH')),
+    DiamondPosition(
         pos: 'top',
-        person: const Person(id: 5, name: 'Ipa Jipa', initials: 'IJ')),
-    Position(
+        player: const Player(id: 5, name: 'Ipa Jipa', initials: 'IJ')),
+    DiamondPosition(
         pos: 'top',
-        person: const Person(id: 6, name: 'Kipa Lipa', initials: 'KL')),
-    Position(
+        player: const Player(id: 6, name: 'Kipa Lipa', initials: 'KL')),
+    DiamondPosition(
         pos: 'top',
-        person: const Person(id: 7, name: 'Mipa Nipa', initials: 'MN')),
+        player: const Player(id: 7, name: 'Mipa Nipa', initials: 'MN')),
   ];
 
   @override
@@ -57,7 +57,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _handleByte(Position incoming, Position? outgoing) {
+  void _handleByte(DiamondPosition incoming, DiamondPosition? outgoing) {
     setState(() {
       widget.positions.remove(incoming);
       if (outgoing != null) {
@@ -66,13 +66,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _onAddPerson(Position position) {
+  void _onAddPerson(DiamondPosition position) {
     setState(() {
       widget.positions.add(position);
     });
   }
 
-  void _onRemovePerson(Position position) {
+  void _onRemovePerson(DiamondPosition position) {
     setState(() {
       widget.positions.remove(position);
     });
@@ -117,7 +117,7 @@ class DiamondWidget extends StatefulWidget {
   const DiamondWidget(
       {super.key, required this.positions, required this.handleByte});
 
-  final List<Position> positions;
+  final List<DiamondPosition> positions;
   final Function handleByte;
 
   @override
@@ -145,7 +145,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   }
 
   void _suggestPositions() {
-    Position? lastPosition;
+    DiamondPosition? lastPosition;
     int nofNextUps = 0;
     widget.positions.sort(((a, b) => a.timePlayed().compareTo(b.timePlayed())));
     for (var position in widget.positions) {
@@ -159,7 +159,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   }
 
   void doByte() {
-    final positionChanges = <Tuple<Position, Position?>>[];
+    final positionChanges = <Tuple<DiamondPosition, DiamondPosition?>>[];
 
     for (var position in widget.positions) {
       if (position.nextUp) {
@@ -209,7 +209,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
 class PositionWidget extends StatefulWidget {
   PositionWidget({super.key, this.pos});
 
-  Position? pos;
+  DiamondPosition? pos;
 
   @override
   State<PositionWidget> createState() => _PositionWidgetState();
@@ -237,12 +237,12 @@ class _PositionWidgetState extends State<PositionWidget> {
                   color: Colors.green, shape: BoxShape.circle),
               alignment: Alignment.center,
               child:
-                  Text(widget.pos?.person.initials ?? '-', style: initalsFont),
+                  Text(widget.pos?.player.initials ?? '-', style: initalsFont),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.pos?.person.name ?? '', style: nameFont),
+                Text(widget.pos?.player.name ?? '', style: nameFont),
                 Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont),
               ],
             )
@@ -256,14 +256,14 @@ class _PositionWidgetState extends State<PositionWidget> {
 class PersonList extends StatefulWidget {
   const PersonList({super.key, required this.positions});
 
-  final List<Position> positions;
+  final List<DiamondPosition> positions;
 
   @override
   State<PersonList> createState() => _PersonListState();
 }
 
 class _PersonListState extends State<PersonList> {
-  Widget _leading(Position position) {
+  Widget _leading(DiamondPosition position) {
     return Checkbox(
         value: position.nextUp,
         onChanged: (value) {
@@ -273,7 +273,7 @@ class _PersonListState extends State<PersonList> {
         });
   }
 
-  Widget _trailing(Position position) {
+  Widget _trailing(DiamondPosition position) {
     return IconButton(
       onPressed: () {
         setState(() {
@@ -302,7 +302,7 @@ class _PersonListState extends State<PersonList> {
         }
 
         final position = widget.positions[index];
-        final personName = position.person.name;
+        final personName = position.player.name;
         final timePlayed = position.timePlayed();
         return ListTile(
           leading: _leading(position),

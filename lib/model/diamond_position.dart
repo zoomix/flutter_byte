@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lag_byte/model/person.dart';
+import 'package:lag_byte/model/player.dart';
 
-class Position {
+class DiamondPosition {
   String pos;
-  final Person person;
+  final Player player;
   final List<PlayEvent> history = [];
   bool nextUp = false;
 
-  Position({required this.pos, required this.person});
+  DiamondPosition({required this.pos, required this.player});
 
   Map<String, dynamic> toMap() {
-    return {'pos': pos, 'person': person.id};
+    return {'pos': pos, 'person': player.id};
   }
 
   @override
   String toString() {
-    return 'Position{pos: $pos, person: $person}';
+    return 'Position{pos: $pos, player: $player}';
   }
 
   String timePlayed() {
