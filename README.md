@@ -12,7 +12,7 @@ Keep track of who's played the longest and at what positions.
 - [x] Select Players for match
 - [ ] Edit Player
 - [ ] Remember positions and played time between restarts.
-- [ ] Reset played time
+- [x] Reset played time
 - [ ] Use player jersey nr
 - [ ] Replace one individual player
 - [ ] Smarten up the suggestor

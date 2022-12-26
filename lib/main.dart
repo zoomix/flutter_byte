@@ -41,6 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    loadPlayers();
+  }
+
+  void loadPlayers() {
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       final players = sp.getStringList("players") ?? [];
       for (var stringPlayer in players) {
@@ -61,9 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _handleByte(DiamondPosition incoming, DiamondPosition? outgoing) {
+  void _handleByte(DiamondPosition? incoming, DiamondPosition? outgoing) {
     setState(() {
-      widget.positions.remove(incoming);
+      if (incoming != null) {
+        widget.positions.remove(incoming);
+      }
       if (outgoing != null) {
         widget.positions.add(outgoing);
       }
@@ -83,6 +89,16 @@ class _MyHomePageState extends State<MyHomePage> {
           .removeWhere((position) => position.player.id == player.id);
     });
   }
+
+  void _clearAll() {
+    setState(() {
+      _pauseAll();
+      widget.positions.clear();
+      loadPlayers();
+    });
+  }
+
+  void _pauseAll() {}
 
   void _pushEditPlayers() {
     final materialPageRoute = myEditPlayers(
@@ -190,6 +206,26 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     });
   }
 
+  void _clearAll() {
+    _pauseAll();
+    setState(() {
+      for (var position in widget.positions) {
+        position.history.clear();
+      }
+    });
+  }
+
+  void _pauseAll() {
+    setState(() {
+      for (var position in [top, left, right, defender]) {
+        position.pos?.stopPlay();
+        widget.handleByte(null, position.pos);
+        position.pos = null;
+      }
+      diamondSuggestPositions(widget.positions);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -202,10 +238,24 @@ class _DiamondWidgetState extends State<DiamondWidget> {
           ),
         ),
         defender,
-        ElevatedButton(
-          onPressed: doByte,
-          child: const Text('BYTE!'),
-        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              onPressed: _clearAll,
+              child: const Text('NOLLSTÄLL'),
+            ),
+            TextButton(
+              onPressed: _pauseAll,
+              child: const Text('MATCHSLUT'),
+            ),
+            ElevatedButton(
+              onPressed: doByte,
+              child: const Text('BYTE!'),
+            ),
+          ],
+        )
       ],
     );
   }
