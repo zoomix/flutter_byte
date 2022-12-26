@@ -11,8 +11,11 @@ Keep track of who's played the longest and at what positions.
 - [x] Rename Person to Player. Position to DiamondPosition
 - [ ] Select Players for match
 - [ ] Edit Player
+- [ ] Remember positions and played time between restarts.
+- [ ] Reset played time
 - [ ] Use player jersey nr
 - [ ] Replace one individual player
+- [ ] Smarten up the suggestor
 - [x] On edit page, list all Players not just Non-engaged players. 
 - [ ] Goalkeeper
 - [ ] History of positions
