@@ -9,7 +9,7 @@ Keep track of who's played the longest and at what positions.
 - [x] Store Person locally
 - [x] Drop Person
 - [x] Rename Person to Player. Position to DiamondPosition
-- [ ] Select Players for match
+- [x] Select Players for match
 - [ ] Edit Player
 - [ ] Remember positions and played time between restarts.
 - [ ] Reset played time

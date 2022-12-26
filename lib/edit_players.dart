@@ -8,29 +8,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 MaterialPageRoute myEditPlayers(
   Function onAdd,
   Function onRemove,
-  Function onUpdatePlayerMatch,
 ) {
   return MaterialPageRoute<void>(
     builder: (context) {
       return ListWrapper(
         onAdd: onAdd,
         onRemove: onRemove,
-        onUpdatePlayerMatch: onUpdatePlayerMatch,
       );
     },
   );
 }
 
 class ListWrapper extends StatefulWidget {
-  ListWrapper(
-      {super.key,
-      required this.onAdd,
-      required this.onRemove,
-      required this.onUpdatePlayerMatch});
+  ListWrapper({super.key, required this.onAdd, required this.onRemove});
 
   final Function onRemove;
   final Function onAdd;
-  final Function onUpdatePlayerMatch;
   final List<Player> players = [];
 
   @override
@@ -46,8 +39,8 @@ class _ListWrapperState extends State<ListWrapper> {
       ),
       body: EditPersonsWidget(
         players: widget.players,
+        onAdd: widget.onAdd,
         onRemove: widget.onRemove,
-        onUpdatePlayerMatch: widget.onUpdatePlayerMatch,
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -125,15 +118,16 @@ Future<void> _dialogBuilder(BuildContext context, onSave) {
 }
 
 class EditPersonsWidget extends StatefulWidget {
-  const EditPersonsWidget(
-      {super.key,
-      required this.players,
-      required this.onRemove,
-      required this.onUpdatePlayerMatch});
+  const EditPersonsWidget({
+    super.key,
+    required this.players,
+    required this.onAdd,
+    required this.onRemove,
+  });
 
   final List<Player> players;
+  final Function onAdd;
   final Function onRemove;
-  final Function onUpdatePlayerMatch;
 
   @override
   State<EditPersonsWidget> createState() => _EditPersonsWidgetState();
@@ -171,7 +165,11 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
       sp.setStringList('players',
           widget.players.map((player) => jsonEncode(player.toMap())).toList());
       setState(() {
-        widget.onUpdatePlayerMatch(player);
+        if (player.inMatch) {
+          widget.onAdd(player);
+        } else {
+          widget.onRemove(player);
+        }
       });
     });
   }
