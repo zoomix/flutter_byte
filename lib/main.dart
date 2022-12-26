@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:lag_byte/edit_persons.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:lag_byte/model/diamond_position.dart';
 import 'package:lag_byte/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 void main() {
@@ -28,35 +31,33 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
-  final positions = <DiamondPosition>[
-    DiamondPosition(
-        pos: 'top',
-        player: const Player(id: 1, name: 'Apa Bepa', initials: 'AB')),
-    DiamondPosition(
-        pos: 'top',
-        player: const Player(id: 2, name: 'Cepa Depa', initials: 'CD')),
-    DiamondPosition(
-        pos: 'top',
-        player: const Player(id: 3, name: 'Epa Fepa', initials: 'EF')),
-    DiamondPosition(
-        pos: 'top',
-        player: const Player(id: 4, name: 'Gepa Hepa', initials: 'GH')),
-    DiamondPosition(
-        pos: 'top',
-        player: const Player(id: 5, name: 'Ipa Jipa', initials: 'IJ')),
-    DiamondPosition(
-        pos: 'top',
-        player: const Player(id: 6, name: 'Kipa Lipa', initials: 'KL')),
-    DiamondPosition(
-        pos: 'top',
-        player: const Player(id: 7, name: 'Mipa Nipa', initials: 'MN')),
-  ];
+  final positions = <DiamondPosition>[];
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      final players = sp.getStringList("players") ?? [];
+      for (var stringPlayer in players) {
+        final jsonPlayer = jsonDecode(stringPlayer);
+        final player = Player(
+          id: jsonPlayer['id'],
+          name: jsonPlayer['name'],
+          initials: jsonPlayer['initials'],
+        );
+        widget.positions.add(DiamondPosition(pos: 'top', player: player));
+      }
+      setState(() {
+        diamondSuggestPositions(widget.positions);
+      });
+    });
+  }
+
   void _handleByte(DiamondPosition incoming, DiamondPosition? outgoing) {
     setState(() {
       widget.positions.remove(incoming);
@@ -66,21 +67,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _onAddPerson(DiamondPosition position) {
+  void _onAddPerson(Player player) {
     setState(() {
+      final position = DiamondPosition(pos: 'top', player: player);
       widget.positions.add(position);
     });
   }
 
-  void _onRemovePerson(DiamondPosition position) {
+  void _onRemovePerson(Player player) {
     setState(() {
-      widget.positions.remove(position);
+      widget.positions.removeWhere((position) => position.player == player);
     });
   }
 
   void _pushEditPersons() {
     final materialPageRoute = myEditPersons(
-      widget.positions,
       _onAddPerson,
       _onRemovePerson,
     );
@@ -124,6 +125,20 @@ class DiamondWidget extends StatefulWidget {
   State<DiamondWidget> createState() => _DiamondWidgetState();
 }
 
+void diamondSuggestPositions(List<DiamondPosition> positions) {
+  DiamondPosition? lastPosition;
+  int nofNextUps = 0;
+  positions.sort(((a, b) => a.timePlayed().compareTo(b.timePlayed())));
+  for (var position in positions) {
+    if (lastPosition != null) {
+      position.pos = lastPosition.pos;
+      position.togglePosition();
+    }
+    lastPosition = position;
+    position.nextUp = (4 > nofNextUps++);
+  }
+}
+
 class _DiamondWidgetState extends State<DiamondWidget> {
   final top = PositionWidget(pos: null);
   final left = PositionWidget(pos: null);
@@ -141,21 +156,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
       'right': right,
       'defender': defender
     };
-    _suggestPositions();
-  }
-
-  void _suggestPositions() {
-    DiamondPosition? lastPosition;
-    int nofNextUps = 0;
-    widget.positions.sort(((a, b) => a.timePlayed().compareTo(b.timePlayed())));
-    for (var position in widget.positions) {
-      if (lastPosition != null) {
-        position.pos = lastPosition.pos;
-        position.togglePosition();
-      }
-      lastPosition = position;
-      position.nextUp = (4 > nofNextUps++);
-    }
+    diamondSuggestPositions(widget.positions);
   }
 
   void doByte() {
@@ -181,7 +182,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     }
 
     setState(() {
-      _suggestPositions();
+      diamondSuggestPositions(widget.positions);
     });
   }
 

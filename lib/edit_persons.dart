@@ -1,16 +1,17 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:lag_byte/model/player.dart';
-import 'package:lag_byte/model/diamond_position.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 MaterialPageRoute myEditPersons(
-  List<DiamondPosition> positions,
   Function onAdd,
   Function onRemove,
 ) {
   return MaterialPageRoute<void>(
     builder: (context) {
       return ListWrapper(
-        positions: positions,
         onAdd: onAdd,
         onRemove: onRemove,
       );
@@ -19,15 +20,11 @@ MaterialPageRoute myEditPersons(
 }
 
 class ListWrapper extends StatefulWidget {
-  const ListWrapper(
-      {super.key,
-      required this.positions,
-      required this.onAdd,
-      required this.onRemove});
+  ListWrapper({super.key, required this.onAdd, required this.onRemove});
 
-  final List<DiamondPosition> positions;
   final Function onRemove;
   final Function onAdd;
+  final List<Player> players = [];
 
   @override
   State<ListWrapper> createState() => _ListWrapperState();
@@ -40,8 +37,8 @@ class _ListWrapperState extends State<ListWrapper> {
       appBar: AppBar(
         title: const Text('Edit persons'),
       ),
-      body: EditPersonsWidget(
-          positions: widget.positions, onRemove: widget.onRemove),
+      body:
+          EditPersonsWidget(players: widget.players, onRemove: widget.onRemove),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -50,16 +47,28 @@ class _ListWrapperState extends State<ListWrapper> {
                 .split(" ")
                 .map((namePart) => namePart[0].toUpperCase())
                 .join('');
-            final newPerson = DiamondPosition(
-                pos: 'top',
-                player: Player(id: 123, name: newName, initials: initials));
-            setState(() {
-              widget.onAdd(newPerson);
-            });
+            _addPlayer(newName, initials);
           });
         },
       ),
     );
+  }
+
+  void _addPlayer(String newName, String initials) {
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      int maxId = widget.players.isEmpty
+          ? 0
+          : widget.players.map((p) => p.id).reduce(max);
+      final newPlayer =
+          Player(id: maxId + 1, name: newName, initials: initials);
+      widget.players.add(newPlayer);
+      sp.setStringList('players',
+          widget.players.map((player) => jsonEncode(player.toMap())).toList());
+
+      setState(() {
+        widget.onAdd(newPlayer);
+      });
+    });
   }
 }
 
@@ -106,9 +115,9 @@ Future<void> _dialogBuilder(BuildContext context, onSave) {
 
 class EditPersonsWidget extends StatefulWidget {
   const EditPersonsWidget(
-      {super.key, required this.positions, required this.onRemove});
+      {super.key, required this.players, required this.onRemove});
 
-  final List<DiamondPosition> positions;
+  final List<Player> players;
   final Function onRemove;
 
   @override
@@ -116,18 +125,37 @@ class EditPersonsWidget extends StatefulWidget {
 }
 
 class _EditPersonsWidgetState extends State<EditPersonsWidget> {
-  void _onRemovePosition(DiamondPosition position) {
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      final players = sp.getStringList("players") ?? [];
+      for (var stringPlayer in players) {
+        final jsonPlayer = jsonDecode(stringPlayer);
+        widget.players.add(
+          Player(
+            id: jsonPlayer['id'],
+            name: jsonPlayer['name'],
+            initials: jsonPlayer['initials'],
+          ),
+        );
+      }
+      setState(() {});
+    });
+  }
+
+  void _onRemovePosition(Player player) {
     setState(() {
-      widget.positions.remove(position);
-      widget.onRemove(position);
+      widget.players.remove(player);
+      widget.onRemove(player);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> positionWidgets = widget.positions
-        .map((position) => EditPersonWidget(
-              position: position,
+    List<Widget> positionWidgets = widget.players
+        .map((player) => EditPersonWidget(
+              player: player,
               onRemove: _onRemovePosition,
             ))
         .toList();
@@ -140,19 +168,19 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
 
 class EditPersonWidget extends StatelessWidget {
   const EditPersonWidget(
-      {super.key, required this.position, required this.onRemove});
+      {super.key, required this.player, required this.onRemove});
 
-  final DiamondPosition position;
+  final Player player;
   final Function onRemove;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(position.player.name),
+      title: Text(player.name),
       trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: (() {
-            onRemove(position);
+            onRemove(player);
           })),
     );
   }
