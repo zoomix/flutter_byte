@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
           id: jsonPlayer['id'],
           name: jsonPlayer['name'],
           initials: jsonPlayer['initials'],
+          inMatch: jsonPlayer['inMatch'],
         );
         widget.positions.add(DiamondPosition(pos: 'top', player: player));
       }
@@ -80,10 +81,23 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _onUpdatePlayerMatch(Player player) {
+    setState(() {
+      try {
+        var position = widget.positions
+            .firstWhere((position) => position.player.id == player.id);
+        position.player.inMatch = player.inMatch;
+      } on StateError catch (e) {
+        print("For some reason $player didn't exist in positions");
+      }
+    });
+  }
+
   void _pushEditPlayers() {
     final materialPageRoute = myEditPlayers(
       _onAddPlayer,
       _onRemovePlayer,
+      _onUpdatePlayerMatch,
     );
     Navigator.of(context).push(materialPageRoute);
   }
@@ -295,7 +309,9 @@ class _PlayerListState extends State<PlayerList> {
       child: ListView(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        children: widget.positions.map((position) {
+        children: widget.positions
+            .where((position) => position.player.inMatch)
+            .map((position) {
           final personName = position.player.name;
           final timePlayed = position.timePlayed();
           return ListTile(

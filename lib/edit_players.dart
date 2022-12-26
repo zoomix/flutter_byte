@@ -8,22 +8,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 MaterialPageRoute myEditPlayers(
   Function onAdd,
   Function onRemove,
+  Function onUpdatePlayerMatch,
 ) {
   return MaterialPageRoute<void>(
     builder: (context) {
       return ListWrapper(
         onAdd: onAdd,
         onRemove: onRemove,
+        onUpdatePlayerMatch: onUpdatePlayerMatch,
       );
     },
   );
 }
 
 class ListWrapper extends StatefulWidget {
-  ListWrapper({super.key, required this.onAdd, required this.onRemove});
+  ListWrapper(
+      {super.key,
+      required this.onAdd,
+      required this.onRemove,
+      required this.onUpdatePlayerMatch});
 
   final Function onRemove;
   final Function onAdd;
+  final Function onUpdatePlayerMatch;
   final List<Player> players = [];
 
   @override
@@ -37,8 +44,11 @@ class _ListWrapperState extends State<ListWrapper> {
       appBar: AppBar(
         title: const Text('Edit players'),
       ),
-      body:
-          EditPersonsWidget(players: widget.players, onRemove: widget.onRemove),
+      body: EditPersonsWidget(
+        players: widget.players,
+        onRemove: widget.onRemove,
+        onUpdatePlayerMatch: widget.onUpdatePlayerMatch,
+      ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -116,10 +126,14 @@ Future<void> _dialogBuilder(BuildContext context, onSave) {
 
 class EditPersonsWidget extends StatefulWidget {
   const EditPersonsWidget(
-      {super.key, required this.players, required this.onRemove});
+      {super.key,
+      required this.players,
+      required this.onRemove,
+      required this.onUpdatePlayerMatch});
 
   final List<Player> players;
   final Function onRemove;
+  final Function onUpdatePlayerMatch;
 
   @override
   State<EditPersonsWidget> createState() => _EditPersonsWidgetState();
@@ -135,10 +149,10 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
         final jsonPlayer = jsonDecode(stringPlayer);
         widget.players.add(
           Player(
-            id: jsonPlayer['id'],
-            name: jsonPlayer['name'],
-            initials: jsonPlayer['initials'],
-          ),
+              id: jsonPlayer['id'],
+              name: jsonPlayer['name'],
+              initials: jsonPlayer['initials'],
+              inMatch: jsonPlayer['inMatch']),
         );
       }
       setState(() {});
@@ -152,12 +166,23 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
     });
   }
 
+  void _onInMatch(Player player) {
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      sp.setStringList('players',
+          widget.players.map((player) => jsonEncode(player.toMap())).toList());
+      setState(() {
+        widget.onUpdatePlayerMatch(player);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> positionWidgets = widget.players
         .map((player) => EditPersonWidget(
               player: player,
               onRemove: _onRemovePosition,
+              onInMatch: _onInMatch,
             ))
         .toList();
 
@@ -169,14 +194,25 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
 
 class EditPersonWidget extends StatelessWidget {
   const EditPersonWidget(
-      {super.key, required this.player, required this.onRemove});
+      {super.key,
+      required this.player,
+      required this.onRemove,
+      required this.onInMatch});
 
   final Player player;
   final Function onRemove;
+  final Function onInMatch;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: Checkbox(
+        value: player.inMatch,
+        onChanged: (value) {
+          player.inMatch = !player.inMatch;
+          onInMatch(player);
+        },
+      ),
       title: Text(player.name),
       trailing: IconButton(
           icon: const Icon(Icons.delete),
