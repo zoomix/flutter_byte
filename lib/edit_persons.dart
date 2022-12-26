@@ -45,7 +45,8 @@ class _ListWrapperState extends State<ListWrapper> {
           _dialogBuilder(context, (String newName) {
             final initials = newName
                 .split(" ")
-                .map((namePart) => namePart[0].toUpperCase())
+                .map((namePart) =>
+                    namePart.isEmpty ? '' : namePart.trim()[0].toUpperCase())
                 .join('');
             _addPlayer(newName, initials);
           });

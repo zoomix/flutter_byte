@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             DiamondWidget(positions: widget.positions, handleByte: _handleByte),
-            PersonList(positions: widget.positions),
+            PlayerList(positions: widget.positions),
           ],
         ),
       ),
@@ -254,16 +254,16 @@ class _PositionWidgetState extends State<PositionWidget> {
   }
 }
 
-class PersonList extends StatefulWidget {
-  const PersonList({super.key, required this.positions});
+class PlayerList extends StatefulWidget {
+  const PlayerList({super.key, required this.positions});
 
   final List<DiamondPosition> positions;
 
   @override
-  State<PersonList> createState() => _PersonListState();
+  State<PlayerList> createState() => _PlayerListState();
 }
 
-class _PersonListState extends State<PersonList> {
+class _PlayerListState extends State<PlayerList> {
   Widget _leading(DiamondPosition position) {
     return Checkbox(
         value: position.nextUp,
@@ -292,28 +292,22 @@ class _PersonListState extends State<PersonList> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView.builder(itemBuilder: (context, i) {
-        final index = i ~/ 2;
-
-        if (index >= widget.positions.length) {
-          return const Text(' ');
-        }
-        if (i % 2 == 1) {
-          return const Divider();
-        }
-
-        final position = widget.positions[index];
-        final personName = position.player.name;
-        final timePlayed = position.timePlayed();
-        return ListTile(
-          leading: _leading(position),
-          title: Text(
-            "$timePlayed $personName",
-            style: const TextStyle(fontSize: 18),
-          ),
-          trailing: _trailing(position),
-        );
-      }),
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        children: widget.positions.map((position) {
+          final personName = position.player.name;
+          final timePlayed = position.timePlayed();
+          return ListTile(
+            leading: _leading(position),
+            title: Text(
+              "$timePlayed $personName",
+              style: const TextStyle(fontSize: 18),
+            ),
+            trailing: _trailing(position),
+          );
+        }).toList(),
+      ),
     );
   }
 }
