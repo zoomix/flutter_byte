@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:lag_byte/edit_persons.dart';
+import 'package:lag_byte/edit_players.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:lag_byte/model/diamond_position.dart';
 import 'package:lag_byte/utils.dart';
@@ -67,23 +67,23 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _onAddPerson(Player player) {
+  void _onAddPlayer(Player player) {
     setState(() {
       final position = DiamondPosition(pos: 'top', player: player);
       widget.positions.add(position);
     });
   }
 
-  void _onRemovePerson(Player player) {
+  void _onRemovePlayer(Player player) {
     setState(() {
       widget.positions.removeWhere((position) => position.player == player);
     });
   }
 
-  void _pushEditPersons() {
-    final materialPageRoute = myEditPersons(
-      _onAddPerson,
-      _onRemovePerson,
+  void _pushEditPlayers() {
+    final materialPageRoute = myEditPlayers(
+      _onAddPlayer,
+      _onRemovePlayer,
     );
     Navigator.of(context).push(materialPageRoute);
   }
@@ -96,8 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: _pushEditPersons,
-            tooltip: 'Edit persons',
+            onPressed: _pushEditPlayers,
+            tooltip: 'Edit Players',
           ),
         ],
       ),

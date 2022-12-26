@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-MaterialPageRoute myEditPersons(
+MaterialPageRoute myEditPlayers(
   Function onAdd,
   Function onRemove,
 ) {
@@ -35,7 +35,7 @@ class _ListWrapperState extends State<ListWrapper> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit persons'),
+        title: const Text('Edit players'),
       ),
       body:
           EditPersonsWidget(players: widget.players, onRemove: widget.onRemove),
