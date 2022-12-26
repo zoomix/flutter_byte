@@ -87,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
         var position = widget.positions
             .firstWhere((position) => position.player.id == player.id);
         position.player.inMatch = player.inMatch;
-      } on StateError catch (e) {
-        print("For some reason $player didn't exist in positions");
+      } on StateError {
+        // I guess this player didn't exist in the list of positions for some reason?
       }
     });
   }
