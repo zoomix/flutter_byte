@@ -1,29 +1,24 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:lag_byte/model/player.dart';
+import 'package:lag_byte/services/players_messagebus.dart';
+import 'package:lag_byte/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-MaterialPageRoute myEditPlayers(
-  Function onAdd,
-  Function onRemove,
-) {
+MaterialPageRoute myEditPlayers() {
   return MaterialPageRoute<void>(
     builder: (context) {
-      return ListWrapper(
-        onAdd: onAdd,
-        onRemove: onRemove,
-      );
+      return ListWrapper();
     },
   );
 }
 
 class ListWrapper extends StatefulWidget {
-  ListWrapper({super.key, required this.onAdd, required this.onRemove});
+  ListWrapper({super.key});
 
-  final Function onRemove;
-  final Function onAdd;
   final List<Player> players = [];
 
   @override
@@ -31,17 +26,41 @@ class ListWrapper extends StatefulWidget {
 }
 
 class _ListWrapperState extends State<ListWrapper> {
+  final PlayersMessagebus _playersMB = locator<PlayersMessagebus>();
+  late StreamSubscription<Player> playerAddStream;
+  late StreamSubscription<Player> playerRemoveStream;
+
+  @override
+  void initState() {
+    super.initState();
+    playerAddStream = _playersMB.playerAddStream.listen((player) {
+      if (!widget.players.contains(player)) {
+        setState(() {
+          widget.players.add(player);
+        });
+      }
+    });
+    playerRemoveStream = _playersMB.playerRemoveStream.listen((player) {
+      setState(() {
+        widget.players.remove(player);
+      });
+      SharedPreferences.getInstance().then((SharedPreferences sp) {
+        sp.setStringList(
+            'players',
+            widget.players
+                .map((player) => jsonEncode(player.toMap()))
+                .toList());
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit players'),
       ),
-      body: EditPersonsWidget(
-        players: widget.players,
-        onAdd: widget.onAdd,
-        onRemove: widget.onRemove,
-      ),
+      body: EditPersonsWidget(players: widget.players),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -65,12 +84,16 @@ class _ListWrapperState extends State<ListWrapper> {
           : widget.players.map((p) => p.id).reduce(max);
       final newPlayer =
           Player(id: maxId + 1, name: newName, initials: initials);
-      widget.players.add(newPlayer);
-      sp.setStringList('players',
-          widget.players.map((player) => jsonEncode(player.toMap())).toList());
 
       setState(() {
-        widget.onAdd(newPlayer);
+        widget.players.add(newPlayer);
+        sp.setStringList(
+            'players',
+            widget.players
+                .map((player) => jsonEncode(player.toMap()))
+                .toList());
+
+        _playersMB.addPlayer(newPlayer);
       });
     });
   }
@@ -121,43 +144,32 @@ class EditPersonsWidget extends StatefulWidget {
   const EditPersonsWidget({
     super.key,
     required this.players,
-    required this.onAdd,
-    required this.onRemove,
   });
 
   final List<Player> players;
-  final Function onAdd;
-  final Function onRemove;
 
   @override
   State<EditPersonsWidget> createState() => _EditPersonsWidgetState();
 }
 
 class _EditPersonsWidgetState extends State<EditPersonsWidget> {
+  final PlayersMessagebus _playersMB = locator<PlayersMessagebus>();
+
   @override
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       final players = sp.getStringList("players") ?? [];
+      widget.players.clear();
       for (var stringPlayer in players) {
-        final jsonPlayer = jsonDecode(stringPlayer);
-        widget.players.add(
-          Player(
-              id: jsonPlayer['id'],
-              name: jsonPlayer['name'],
-              initials: jsonPlayer['initials'],
-              inMatch: jsonPlayer['inMatch']),
-        );
+        widget.players.add(Player.fromJson(stringPlayer));
       }
       setState(() {});
     });
   }
 
   void _onRemovePosition(Player player) {
-    setState(() {
-      widget.players.remove(player);
-      widget.onRemove(player);
-    });
+    _playersMB.removePlayer(player);
   }
 
   void _onInMatch(Player player) {
@@ -165,11 +177,7 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
       sp.setStringList('players',
           widget.players.map((player) => jsonEncode(player.toMap())).toList());
       setState(() {
-        if (player.inMatch) {
-          widget.onAdd(player);
-        } else {
-          widget.onRemove(player);
-        }
+        _playersMB.updatePlayer(player);
       });
     });
   }
