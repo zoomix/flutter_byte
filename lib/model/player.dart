@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Player {
   final int id;
   final String name;
@@ -12,6 +14,16 @@ class Player {
 
   Map<String, dynamic> toMap() {
     return {'id': id, 'name': name, 'initials': initials, 'inMatch': inMatch};
+  }
+
+  static fromJson(String stringPlayer) {
+    final jsonPlayer = jsonDecode(stringPlayer);
+    return Player(
+      id: jsonPlayer['id'],
+      name: jsonPlayer['name'],
+      initials: jsonPlayer['initials'],
+      inMatch: jsonPlayer['inMatch'],
+    );
   }
 
   @override

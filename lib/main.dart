@@ -6,7 +6,6 @@ import 'package:lag_byte/edit_players.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:lag_byte/model/diamond_position.dart';
 import 'package:lag_byte/services/players_messagebus.dart';
-import 'package:lag_byte/services/positions_messagebus.dart';
 import 'package:lag_byte/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timer_builder/timer_builder.dart';
@@ -70,13 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       final players = sp.getStringList("players") ?? [];
       for (var stringPlayer in players) {
-        final jsonPlayer = jsonDecode(stringPlayer);
-        final player = Player(
-          id: jsonPlayer['id'],
-          name: jsonPlayer['name'],
-          initials: jsonPlayer['initials'],
-          inMatch: jsonPlayer['inMatch'],
-        );
+        final player = Player.fromJson(stringPlayer);
         if (player.inMatch) {
           widget.positions.add(DiamondPosition(pos: 'top', player: player));
         }
@@ -107,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
         widget.positions
             .removeWhere((position) => position.player.id == player.id);
       }
+      diamondSuggestPositions(widget.positions);
     });
   }
 
@@ -125,16 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
           .removeWhere((position) => position.player.id == player.id);
     });
   }
-
-  void _clearAll() {
-    setState(() {
-      _pauseAll();
-      widget.positions.clear();
-      loadPlayers();
-    });
-  }
-
-  void _pauseAll() {}
 
   void _pushEditPlayers() {
     final materialPageRoute = myEditPlayers();

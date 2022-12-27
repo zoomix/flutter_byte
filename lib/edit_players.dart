@@ -35,14 +35,22 @@ class _ListWrapperState extends State<ListWrapper> {
     super.initState();
     playerAddStream = _playersMB.playerAddStream.listen((player) {
       if (!widget.players.contains(player)) {
-        print('here I go talking about adding $player');
         setState(() {
           widget.players.add(player);
         });
       }
     });
     playerRemoveStream = _playersMB.playerRemoveStream.listen((player) {
-      print('here I go talking about removing $player');
+      setState(() {
+        widget.players.remove(player);
+      });
+      SharedPreferences.getInstance().then((SharedPreferences sp) {
+        sp.setStringList(
+            'players',
+            widget.players
+                .map((player) => jsonEncode(player.toMap()))
+                .toList());
+      });
     });
   }
 
@@ -154,14 +162,7 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
       final players = sp.getStringList("players") ?? [];
       widget.players.clear();
       for (var stringPlayer in players) {
-        final jsonPlayer = jsonDecode(stringPlayer);
-        widget.players.add(
-          Player(
-              id: jsonPlayer['id'],
-              name: jsonPlayer['name'],
-              initials: jsonPlayer['initials'],
-              inMatch: jsonPlayer['inMatch']),
-        );
+        widget.players.add(Player.fromJson(stringPlayer));
       }
       setState(() {});
     });
@@ -169,13 +170,6 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
 
   void _onRemovePosition(Player player) {
     _playersMB.removePlayer(player);
-    setState(() {
-      widget.players.remove(player);
-    });
-    SharedPreferences.getInstance().then((SharedPreferences sp) {
-      sp.setStringList('players',
-          widget.players.map((player) => jsonEncode(player.toMap())).toList());
-    });
   }
 
   void _onInMatch(Player player) {
