@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -44,13 +43,7 @@ class _ListWrapperState extends State<ListWrapper> {
       setState(() {
         widget.players.remove(player);
       });
-      SharedPreferences.getInstance().then((SharedPreferences sp) {
-        sp.setStringList(
-            'players',
-            widget.players
-                .map((player) => jsonEncode(player.toMap()))
-                .toList());
-      });
+      persistPlayers(widget.players);
     });
   }
 
@@ -87,15 +80,10 @@ class _ListWrapperState extends State<ListWrapper> {
 
       setState(() {
         widget.players.add(newPlayer);
-        sp.setStringList(
-            'players',
-            widget.players
-                .map((player) => jsonEncode(player.toMap()))
-                .toList());
-
         _playersMB.addPlayer(newPlayer);
       });
     });
+    persistPlayers(widget.players);
   }
 }
 
@@ -173,12 +161,9 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
   }
 
   void _onInMatch(Player player) {
-    SharedPreferences.getInstance().then((SharedPreferences sp) {
-      sp.setStringList('players',
-          widget.players.map((player) => jsonEncode(player.toMap())).toList());
-      setState(() {
-        _playersMB.updatePlayer(player);
-      });
+    setState(() {
+      _playersMB.updatePlayer(player);
+      persistPlayers(widget.players);
     });
   }
 
