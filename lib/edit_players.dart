@@ -192,7 +192,7 @@ class _EditPersonsWidgetState extends State<EditPersonsWidget> {
             ))
         .toList();
 
-    return Column(
+    return ListView(
       children: positionWidgets,
     );
   }
