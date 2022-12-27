@@ -57,26 +57,26 @@ class _ListWrapperState extends State<ListWrapper> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          _dialogBuilder(context, (String newName) {
+          _dialogBuilder(context, (String newName, String jerseyNr) {
             final initials = newName
                 .split(" ")
                 .map((namePart) =>
                     namePart.isEmpty ? '' : namePart.trim()[0].toUpperCase())
                 .join('');
-            _addPlayer(newName, initials);
+            _addPlayer(newName, initials, jerseyNr);
           });
         },
       ),
     );
   }
 
-  void _addPlayer(String newName, String initials) {
+  void _addPlayer(String newName, String initials, String jerseyNr) {
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       int maxId = widget.players.isEmpty
           ? 0
           : widget.players.map((p) => p.id).reduce(max);
-      final newPlayer =
-          Player(id: maxId + 1, name: newName, initials: initials);
+      final newPlayer = Player(
+          id: maxId + 1, name: newName, initials: initials, jerseyNr: jerseyNr);
 
       setState(() {
         widget.players.add(newPlayer);
@@ -89,18 +89,31 @@ class _ListWrapperState extends State<ListWrapper> {
 
 Future<void> _dialogBuilder(BuildContext context, onSave) {
   String textInput = "";
+  String jerseyNr = "";
 
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Enter player name'),
-        content: TextField(
-          autofocus: true,
-          maxLength: 50,
-          onChanged: ((value) {
-            textInput = value;
-          }),
+        title: const Text('New player'),
+        content: Column(
+          children: [
+            const Text('Player name'),
+            TextField(
+              autofocus: true,
+              maxLength: 50,
+              onChanged: ((value) {
+                textInput = value;
+              }),
+            ),
+            const Text('Jersey number'),
+            TextField(
+              maxLength: 3,
+              onChanged: ((value) {
+                jerseyNr = value;
+              }),
+            ),
+          ],
         ),
         actions: <Widget>[
           TextButton(
@@ -118,7 +131,7 @@ Future<void> _dialogBuilder(BuildContext context, onSave) {
             ),
             child: const Text('Save'),
             onPressed: () {
-              onSave(textInput);
+              onSave(textInput, jerseyNr);
               Navigator.of(context).pop();
             },
           ),
@@ -204,7 +217,7 @@ class EditPersonWidget extends StatelessWidget {
           onInMatch(player);
         },
       ),
-      title: Text(player.name),
+      title: Text(player.prettyName),
       trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: (() {

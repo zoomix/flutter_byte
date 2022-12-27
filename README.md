@@ -13,7 +13,7 @@ Keep track of who's played the longest and at what positions.
 - [ ] Edit Player
 - [ ] Remember positions and played time between restarts.
 - [x] Reset played time
-- [ ] Use player jersey nr
+- [x] Use player jersey nr
 - [ ] Replace one individual player
 - [ ] Smarten up the suggestor
 - [x] On edit page, list all Players not just Non-engaged players. 

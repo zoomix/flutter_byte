@@ -314,7 +314,7 @@ class _PositionWidgetState extends State<PositionWidget> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.pos?.player.name ?? '', style: nameFont),
+                Text(widget.pos?.player.prettyName ?? '', style: nameFont),
                 Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont),
               ],
             )
@@ -367,7 +367,7 @@ class _PlayerListState extends State<PlayerList> {
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         children: widget.positions.map((position) {
-          final personName = position.player.name;
+          final personName = position.player.prettyName;
           final timePlayed = position.timePlayed();
           return ListTile(
             leading: _leading(position),
