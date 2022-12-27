@@ -18,4 +18,12 @@ class Player {
   String toString() {
     return 'Person{id: $id, name: $name, initials: $initials, inMatch: $inMatch}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Player && id == other.id;
+  }
+
+  @override
+  int get hashCode => id;
 }

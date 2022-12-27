@@ -1,15 +1,19 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lag_byte/edit_players.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:lag_byte/model/diamond_position.dart';
+import 'package:lag_byte/services/players_messagebus.dart';
+import 'package:lag_byte/services/positions_messagebus.dart';
 import 'package:lag_byte/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  setupLocator();
   runApp(const MyApp());
 }
 
@@ -38,9 +42,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final PlayersMessagebus _playersMB = locator<PlayersMessagebus>();
+  // final PositionsMessagebus _positionMB = locator<PositionsMessagebus>();
+
+  // late StreamSubscription<DiamondPosition> positionAddStream;
+  // late StreamSubscription<DiamondPosition> positionRemoveStream;
+  late StreamSubscription<Player> playerAddStream;
+  late StreamSubscription<Player> playerRemoveStream;
+  late StreamSubscription<Player> playerUpdatedStream;
+
   @override
   void initState() {
     super.initState();
+    playerAddStream = _playersMB.playerAddStream.listen((player) {
+      _onAddPlayer(player);
+    });
+    playerRemoveStream = _playersMB.playerRemoveStream.listen(((player) {
+      _onRemovePlayer(player);
+    }));
+    playerUpdatedStream = _playersMB.playerUpdateStream.listen((player) {
+      _onUpdatePlayer(player);
+    });
     loadPlayers();
   }
 
@@ -76,10 +98,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _onUpdatePlayer(Player player) {
+    setState(() {
+      if (player.inMatch) {
+        final position = DiamondPosition(pos: 'top', player: player);
+        widget.positions.add(position);
+      } else {
+        widget.positions
+            .removeWhere((position) => position.player.id == player.id);
+      }
+    });
+  }
+
   void _onAddPlayer(Player player) {
     setState(() {
-      final position = DiamondPosition(pos: 'top', player: player);
-      widget.positions.add(position);
+      if (player.inMatch) {
+        final position = DiamondPosition(pos: 'top', player: player);
+        widget.positions.add(position);
+      }
     });
   }
 
@@ -101,10 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _pauseAll() {}
 
   void _pushEditPlayers() {
-    final materialPageRoute = myEditPlayers(
-      _onAddPlayer,
-      _onRemovePlayer,
-    );
+    final materialPageRoute = myEditPlayers();
     Navigator.of(context).push(materialPageRoute);
   }
 
