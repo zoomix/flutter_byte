@@ -104,7 +104,10 @@ void persistActivePositions(List positions) {
   SharedPreferences.getInstance().then((SharedPreferences sp) {
     sp.setStringList(
       'positions-active',
-      positions.map((position) => jsonEncode(position.toMap())).toList(),
+      positions
+          .where((position) => position != null)
+          .map((position) => jsonEncode(position.toMap()))
+          .toList(),
     );
 
     for (var position in positions) {
