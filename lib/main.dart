@@ -342,7 +342,7 @@ class PositionWidget extends StatefulWidget {
 
 class _PositionWidgetState extends State<PositionWidget> {
   final initalsFont = const TextStyle(
-      fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black);
   final nameFont = const TextStyle(fontSize: 16);
   final timeFont = const TextStyle(fontSize: 20);
 
@@ -383,6 +383,9 @@ class _PositionWidgetState extends State<PositionWidget> {
                   child: Text(
                     widget.pos?.player.initials ?? '-',
                     style: initalsFont,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
                   ),
                 ),
               ),
