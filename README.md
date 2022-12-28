@@ -38,3 +38,11 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+
+## Icons
+
+The icon is a mashup of these two free images. Unless you think I did something bad. In that case, let me know and I'll get it fixed. 
+https://pngimg.com/image/87513
+<a href="http://cliparts.co">Clipart.co</a> - http://cliparts.co/clipart/2335423
