@@ -289,9 +289,9 @@ class PositionWidget extends StatefulWidget {
 
 class _PositionWidgetState extends State<PositionWidget> {
   final initalsFont =
-      const TextStyle(fontSize: 32, fontWeight: FontWeight.bold);
+      const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
   final nameFont = const TextStyle(fontSize: 16);
-  final timeFont = const TextStyle(fontSize: 24);
+  final timeFont = const TextStyle(fontSize: 20);
 
   @override
   Widget build(BuildContext context) {
@@ -303,8 +303,9 @@ class _PositionWidgetState extends State<PositionWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 64,
-              width: 64,
+              margin: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+              height: 48,
+              width: 48,
               decoration: const BoxDecoration(
                   color: Colors.green, shape: BoxShape.circle),
               alignment: Alignment.center,
