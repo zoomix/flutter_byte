@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lag_byte/edit_players.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:lag_byte/model/diamond_position.dart';
 import 'package:lag_byte/services/players_messagebus.dart';
+import 'package:lag_byte/services/positions_messagebus.dart';
 import 'package:lag_byte/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timer_builder/timer_builder.dart';
@@ -177,16 +177,22 @@ void diamondSuggestPositions(List<DiamondPosition> positions) {
 }
 
 class _DiamondWidgetState extends State<DiamondWidget> {
-  final top = PositionWidget(pos: null);
-  final left = PositionWidget(pos: null);
-  final right = PositionWidget(pos: null);
-  final defender = PositionWidget(pos: null);
+  late final PositionWidget top;
+  late final PositionWidget left;
+  late final PositionWidget right;
+  late final PositionWidget defender;
+
+  final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
 
   var diamondShape = {};
 
   @override
   void initState() {
     super.initState();
+    top = PositionWidget(positions: widget.positions, pos: null);
+    left = PositionWidget(positions: widget.positions, pos: null);
+    right = PositionWidget(positions: widget.positions, pos: null);
+    defender = PositionWidget(positions: widget.positions, pos: null);
     diamondShape = {
       'top': top,
       'left': left,
@@ -194,6 +200,19 @@ class _DiamondWidgetState extends State<DiamondWidget> {
       'defender': defender
     };
     diamondSuggestPositions(widget.positions);
+    _positionsMB.byteStream
+        .listen((Tuple<DiamondPosition, DiamondPosition> positionChange) {
+      setState(() {
+        positionChange.item2.stopPlay();
+        positionChange.item1.pos = positionChange.item2.pos;
+        diamondShape[positionChange.item1.pos].pos = positionChange.item1;
+        widget.handleByte(positionChange.item1, positionChange.item2);
+        positionChange.item1.startPlay();
+        positionChange.item2.nextUp = false;
+        positionChange.item2.togglePosition();
+        diamondSuggestPositions(widget.positions);
+      });
+    });
   }
 
   void doByte() {
@@ -279,8 +298,9 @@ class _DiamondWidgetState extends State<DiamondWidget> {
 }
 
 class PositionWidget extends StatefulWidget {
-  PositionWidget({super.key, this.pos});
+  PositionWidget({super.key, required this.positions, this.pos});
 
+  final List<DiamondPosition> positions;
   DiamondPosition? pos;
 
   @override
@@ -288,8 +308,8 @@ class PositionWidget extends StatefulWidget {
 }
 
 class _PositionWidgetState extends State<PositionWidget> {
-  final initalsFont =
-      const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+  final initalsFont = const TextStyle(
+      fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
   final nameFont = const TextStyle(fontSize: 16);
   final timeFont = const TextStyle(fontSize: 20);
 
@@ -309,8 +329,15 @@ class _PositionWidgetState extends State<PositionWidget> {
               decoration: const BoxDecoration(
                   color: Colors.green, shape: BoxShape.circle),
               alignment: Alignment.center,
-              child:
-                  Text(widget.pos?.player.initials ?? '-', style: initalsFont),
+              child: TextButton(
+                onPressed: (() {
+                  directPlayerChange(context, widget.positions, widget.pos!);
+                }),
+                child: Text(
+                  widget.pos?.player.initials ?? '-',
+                  style: initalsFont,
+                ),
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,6 +351,44 @@ class _PositionWidgetState extends State<PositionWidget> {
       }),
     );
   }
+}
+
+Future<void> directPlayerChange(BuildContext context,
+    List<DiamondPosition> positions, DiamondPosition oldPosition) {
+  final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Change ${oldPosition.player.prettyName}'),
+        content: Expanded(
+          child: Column(
+            children: positions.map((position) {
+              return ListTile(
+                title: Text(position.player.prettyName),
+                trailing: Text(position.timePlayed()),
+                onTap: () {
+                  _positionsMB.doByte(position, oldPosition);
+                  Navigator.of(context).pop();
+                },
+              );
+            }).toList(),
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class PlayerList extends StatefulWidget {

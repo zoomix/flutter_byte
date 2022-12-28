@@ -14,14 +14,15 @@ Keep track of who's played the longest and at what positions.
 - [ ] Remember positions and played time between restarts.
 - [x] Reset played time
 - [x] Use player jersey nr
-- [ ] Replace one individual player
-- [ ] Smarten up the suggestor
+- [x] Replace one individual player
+- [ ] Set byte-reminder
 - [x] On edit page, list all Players not just Non-engaged players. 
 - [ ] Goalkeeper
 - [ ] History of positions
 - [ ] Outline on players about to be replaced
 - [x] Sort list of players by time played, ascending
 - [ ] Warn if multiple selected players have the same position
+- [ ] Smarten up the suggestor
 - [ ] FireBase it for shareability.
 
 
