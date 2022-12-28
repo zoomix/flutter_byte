@@ -350,38 +350,53 @@ class _PositionWidgetState extends State<PositionWidget> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      child:
-          TimerBuilder.periodic(const Duration(seconds: 1), builder: (context) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-              height: 48,
-              width: 48,
-              decoration: const BoxDecoration(
-                  color: Colors.green, shape: BoxShape.circle),
-              alignment: Alignment.center,
-              child: TextButton(
-                onPressed: (() {
-                  directPlayerChange(context, widget.positions, widget.pos!);
-                }),
-                child: Text(
-                  widget.pos?.player.initials ?? '-',
-                  style: initalsFont,
+      child: TimerBuilder.periodic(
+        const Duration(seconds: 1),
+        builder: (context) {
+          final selected = widget.pos == null
+              ? false
+              : widget.positions
+                  .where((position) => position.nextUp)
+                  .where((position) => position.pos == widget.pos?.pos)
+                  .isNotEmpty;
+          final border = selected
+              ? Border.fromBorderSide(
+                  BorderSide(width: 2),
+                )
+              : null;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                height: 48,
+                width: 48,
+                decoration: BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                    border: border),
+                alignment: Alignment.center,
+                child: TextButton(
+                  onPressed: (() {
+                    directPlayerChange(context, widget.positions, widget.pos!);
+                  }),
+                  child: Text(
+                    widget.pos?.player.initials ?? '-',
+                    style: initalsFont,
+                  ),
                 ),
               ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.pos?.player.prettyName ?? '', style: nameFont),
-                Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont),
-              ],
-            )
-          ],
-        );
-      }),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.pos?.player.prettyName ?? '', style: nameFont),
+                  Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont),
+                ],
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 }

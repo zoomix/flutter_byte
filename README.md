@@ -19,7 +19,7 @@ Keep track of who's played the longest and at what positions.
 - [x] On edit page, list all Players not just Non-engaged players. 
 - [ ] Goalkeeper
 - [ ] History of positions
-- [ ] Outline on players about to be replaced
+- [x] Outline on players about to be replaced
 - [x] Sort list of players by time played, ascending
 - [ ] Warn if multiple selected players have the same position
 - [ ] Smarten up the suggestor
