@@ -11,7 +11,7 @@ Keep track of who's played the longest and at what positions.
 - [x] Rename Person to Player. Position to DiamondPosition
 - [x] Select Players for match
 - [ ] Edit Player
-- [ ] Remember positions and played time between restarts.
+- [x] Remember positions and played time between restarts.
 - [x] Reset played time
 - [x] Use player jersey nr
 - [x] Replace one individual player

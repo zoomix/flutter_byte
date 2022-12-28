@@ -42,10 +42,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final PlayersMessagebus _playersMB = locator<PlayersMessagebus>();
-  // final PositionsMessagebus _positionMB = locator<PositionsMessagebus>();
 
-  // late StreamSubscription<DiamondPosition> positionAddStream;
-  // late StreamSubscription<DiamondPosition> positionRemoveStream;
   late StreamSubscription<Player> playerAddStream;
   late StreamSubscription<Player> playerRemoveStream;
   late StreamSubscription<Player> playerUpdatedStream;
@@ -62,7 +59,19 @@ class _MyHomePageState extends State<MyHomePage> {
     playerUpdatedStream = _playersMB.playerUpdateStream.listen((player) {
       _onUpdatePlayer(player);
     });
-    loadPlayers();
+    awaitedLoadPositions();
+  }
+
+  void awaitedLoadPositions() async {
+    var loadedPositions = await loadPositions();
+    for (var position in loadedPositions) {
+      if (position != null) {
+        widget.positions.add(position);
+      }
+    }
+    setState(() {
+      diamondSuggestPositions(widget.positions);
+    });
   }
 
   void loadPlayers() {
@@ -102,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       diamondSuggestPositions(widget.positions);
     });
+    persistPositions(widget.positions);
   }
 
   void _onAddPlayer(Player player) {
@@ -111,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
         widget.positions.add(position);
       }
     });
+    persistPositions(widget.positions);
   }
 
   void _onRemovePlayer(Player player) {
@@ -118,11 +129,13 @@ class _MyHomePageState extends State<MyHomePage> {
       widget.positions
           .removeWhere((position) => position.player.id == player.id);
     });
+    persistPositions(widget.positions);
   }
 
   void _pushEditPlayers() {
     final materialPageRoute = myEditPlayers();
     Navigator.of(context).push(materialPageRoute);
+    persistPositions(widget.positions);
   }
 
   @override
@@ -211,7 +224,23 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         positionChange.item2.nextUp = false;
         positionChange.item2.togglePosition();
         diamondSuggestPositions(widget.positions);
+
+        persistActivePositions(
+            diamondShape.values.map((pw) => pw.pos).toList());
+        persistPositions(widget.positions);
       });
+    });
+    awaitedLoadActievPositions();
+  }
+
+  void awaitedLoadActievPositions() async {
+    var loadedPositions = await loadActivePositions();
+    setState(() {
+      for (var position in loadedPositions) {
+        if (position != null) {
+          diamondShape[position.pos].pos = position;
+        }
+      }
     });
   }
 
@@ -240,6 +269,8 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     setState(() {
       diamondSuggestPositions(widget.positions);
     });
+    persistActivePositions(diamondShape.values.map((pw) => pw.pos).toList());
+    persistPositions(widget.positions);
   }
 
   void _clearAll() {
@@ -260,6 +291,8 @@ class _DiamondWidgetState extends State<DiamondWidget> {
       }
       diamondSuggestPositions(widget.positions);
     });
+    persistActivePositions([]);
+    persistPositions(widget.positions);
   }
 
   @override
@@ -355,7 +388,7 @@ class _PositionWidgetState extends State<PositionWidget> {
 
 Future<void> directPlayerChange(BuildContext context,
     List<DiamondPosition> positions, DiamondPosition oldPosition) {
-  final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
+  final PositionsMessagebus positionsMB = locator<PositionsMessagebus>();
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -368,7 +401,7 @@ Future<void> directPlayerChange(BuildContext context,
                 title: Text(position.player.prettyName),
                 trailing: Text(position.timePlayed()),
                 onTap: () {
-                  _positionsMB.doByte(position, oldPosition);
+                  positionsMB.doByte(position, oldPosition);
                   Navigator.of(context).pop();
                 },
               );
