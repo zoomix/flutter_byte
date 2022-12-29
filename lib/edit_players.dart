@@ -58,12 +58,27 @@ class _ListWrapperState extends State<ListWrapper> {
         child: const Icon(Icons.add),
         onPressed: () {
           _dialogBuilder(context, (String newName, String jerseyNr) {
-            final initials = newName
-                .split(" ")
-                .map((namePart) =>
-                    namePart.isEmpty ? '' : namePart.trim()[0].toUpperCase())
-                .join('');
-            _addPlayer(newName, initials, jerseyNr);
+            if (newName == '.') {
+              print('Bootstrapping with default users');
+              _addPlayer("Thomas Ravelli", "TR", "1");
+              _addPlayer("Roland Nilsson", "RN", "2");
+              _addPlayer("Patrik Andersson", "PA", "3");
+              _addPlayer("Joachim Björklund", "JB", "4");
+              _addPlayer("Roger Ljung", "RJ", "5");
+              _addPlayer("Stefan Schwarz", "SS", "6");
+              _addPlayer("Henrik Larsson", "HL", "7");
+              _addPlayer("Klas Ingesson", "KI", "8");
+              _addPlayer("Jonas Thern", "JT", "9");
+              _addPlayer("Martin Dahlin", "MD", "10");
+              _addPlayer("Tomas Brolin", "TB", "11");
+            } else {
+              final initials = newName
+                  .split(" ")
+                  .map((namePart) =>
+                      namePart.isEmpty ? '' : namePart.trim()[0].toUpperCase())
+                  .join('');
+              _addPlayer(newName, initials, jerseyNr);
+            }
           });
         },
       ),
