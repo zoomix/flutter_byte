@@ -42,6 +42,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final PlayersMessagebus _playersMB = locator<PlayersMessagebus>();
+  final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
 
   late StreamSubscription<Player> playerAddStream;
   late StreamSubscription<Player> playerRemoveStream;
@@ -145,6 +146,16 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         actions: [
           IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () => _positionsMB.clearAllPosition(0),
+            tooltip: 'Nollställ',
+          ),
+          IconButton(
+            icon: const Icon(Icons.pause),
+            onPressed: () => _positionsMB.pauseAllPosition(0),
+            tooltip: 'Matchslut',
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: _pushEditPlayers,
             tooltip: 'Edit Players',
@@ -230,6 +241,8 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         persistPositions(widget.positions);
       });
     });
+    _positionsMB.clearAllStream.listen((ts) => _clearAll());
+    _positionsMB.pauseAllStream.listen((ts) => _pauseAll());
     awaitedLoadActievPositions();
   }
 
@@ -307,24 +320,10 @@ class _DiamondWidgetState extends State<DiamondWidget> {
           ),
         ),
         defender,
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            TextButton(
-              onPressed: _clearAll,
-              child: const Text('NOLLSTÄLL'),
-            ),
-            TextButton(
-              onPressed: _pauseAll,
-              child: const Text('MATCHSLUT'),
-            ),
-            ElevatedButton(
-              onPressed: doByte,
-              child: const Text('BYTE!'),
-            ),
-          ],
-        )
+        ElevatedButton(
+          onPressed: doByte,
+          child: const Text('BYTE!'),
+        ),
       ],
     );
   }

@@ -11,6 +11,14 @@ class PositionsMessagebus {
   Stream<DiamondPosition> get removeStream => _removeSubject.stream;
   void removePosition(DiamondPosition position) => _removeSubject.add(position);
 
+  final _clearAllSubject = BehaviorSubject<int>();
+  Stream<int> get clearAllStream => _clearAllSubject.stream;
+  void clearAllPosition(int ts) => _clearAllSubject.add(ts);
+
+  final _pauseAllSubject = BehaviorSubject<int>();
+  Stream<int> get pauseAllStream => _pauseAllSubject.stream;
+  void pauseAllPosition(int ts) => _pauseAllSubject.add(ts);
+
   final _byteSubject =
       BehaviorSubject<Tuple<DiamondPosition, DiamondPosition>>();
   Stream<Tuple<DiamondPosition, DiamondPosition>> get byteStream =>
