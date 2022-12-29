@@ -212,3 +212,27 @@ Future<List<DiamondPosition?>> loadPositions() async {
   }).toList();
   return result;
 }
+
+void persistLastByte(DateTime? lastByte, int secondsPerByte) async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  if (lastByte != null) {
+    sp.setInt('lastByte', lastByte.millisecondsSinceEpoch);
+  } else {
+    sp.remove('lastByte');
+  }
+  sp.setInt('secondsPerByte', secondsPerByte);
+}
+
+Future<Map<String, dynamic>> loadLastByte() async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  final lastByteStr = sp.containsKey('lastByte') ? sp.getInt('lastByte') : null;
+  final secondsPerByte =
+      sp.containsKey('secondsPerByte') ? sp.getInt('secondsPerByte') : null;
+
+  return {
+    'lastByte': lastByteStr != null
+        ? DateTime.fromMillisecondsSinceEpoch(lastByteStr!)
+        : null,
+    'secondsPerByte': secondsPerByte
+  };
+}

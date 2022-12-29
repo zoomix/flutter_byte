@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lag_byte/edit_players.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:lag_byte/model/diamond_position.dart';
@@ -33,7 +34,6 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title});
 
   final String title;
-
   final positions = <DiamondPosition>[];
 
   @override
@@ -47,6 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
   late StreamSubscription<Player> playerAddStream;
   late StreamSubscription<Player> playerRemoveStream;
   late StreamSubscription<Player> playerUpdatedStream;
+  late StreamSubscription<int> positionPauseStream;
+
+  DateTime? lastByte;
+  int secondsPerByte = 180;
 
   @override
   void initState() {
@@ -60,7 +64,24 @@ class _MyHomePageState extends State<MyHomePage> {
     playerUpdatedStream = _playersMB.playerUpdateStream.listen((player) {
       _onUpdatePlayer(player);
     });
+    _positionsMB.pauseAllStream.listen((ts) {
+      lastByte = null;
+      persistLastByte(lastByte, secondsPerByte);
+    });
+    _positionsMB.clearAllStream.listen((ts) {
+      lastByte = null;
+      persistLastByte(lastByte, secondsPerByte);
+    });
     awaitedLoadPositions();
+    awaitedLoadLastByte();
+  }
+
+  void awaitedLoadLastByte() async {
+    var lastByteMap = await loadLastByte();
+    setState(() {
+      lastByte = lastByteMap['lastByte'];
+      secondsPerByte = lastByteMap['secondsPerByte'];
+    });
   }
 
   void awaitedLoadPositions() async {
@@ -93,6 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _handleByte(DiamondPosition? incoming, DiamondPosition? outgoing) {
     setState(() {
       if (incoming != null) {
+        lastByte = DateTime.now();
+        persistLastByte(lastByte, secondsPerByte);
         widget.positions.remove(incoming);
       }
       if (outgoing != null) {
@@ -145,6 +168,25 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
+          TextButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.timer_sharp, color: Colors.black),
+            label: TimerBuilder.periodic(const Duration(seconds: 1),
+                builder: (context) {
+              int secsLeft = secondsPerByte -
+                  (lastByte != null
+                      ? DateTime.now().difference(lastByte!).inSeconds
+                      : 0);
+              final nf = NumberFormat("00");
+              return Text(
+                "${secsLeft < 0 ? '-' : ''}${nf.format(secsLeft ~/ 60)}:${nf.format((secsLeft < 0 ? 60 - secsLeft : secsLeft) % 60)}",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }),
+          ),
           IconButton(
             icon: const Icon(Icons.clear),
             onPressed: () => _positionsMB.clearAllPosition(0),
