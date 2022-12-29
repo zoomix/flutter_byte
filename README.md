@@ -21,7 +21,7 @@ Keep track of who's played the longest and at what positions.
 - [ ] History of positions
 - [x] Outline on players about to be replaced
 - [x] Sort list of players by time played, ascending
-- [ ] Warn if multiple selected players have the same position
+- [x] Warn if multiple selected players have the same position
 - [ ] Smarten up the suggestor
 - [ ] FireBase it for shareability.
 
