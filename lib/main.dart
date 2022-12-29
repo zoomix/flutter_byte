@@ -512,7 +512,14 @@ class _PlayerListState extends State<PlayerList> {
                   alignment: Alignment.center,
                   child: Text(position.player.jerseyNr),
                 ),
-                Text(personName, style: const TextStyle(fontSize: 18)),
+                Expanded(
+                  child: Text(
+                    personName,
+                    style: const TextStyle(fontSize: 18),
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
               ],
             ),
             trailing: _trailing(position),
