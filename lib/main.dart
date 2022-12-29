@@ -479,6 +479,14 @@ class _PlayerListState extends State<PlayerList> {
 
   @override
   Widget build(BuildContext context) {
+    final positionCounts = widget.positions
+        .where((position) => position.nextUp)
+        .map((position) => position.pos)
+        .fold(<String, int>{}, (var total, pos) {
+      total[pos] = (total[pos] ?? 0) + 1;
+      return total;
+    });
+
     return Expanded(
       child: ListView(
         scrollDirection: Axis.vertical,
@@ -495,8 +503,11 @@ class _PlayerListState extends State<PlayerList> {
                   margin: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                   height: 32,
                   width: 32,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
+                  decoration: BoxDecoration(
+                    color: position.nextUp &&
+                            (positionCounts[position.pos] ?? 0) > 1
+                        ? Colors.red
+                        : Colors.green,
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
