@@ -34,6 +34,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   late final PositionWidget left;
   late final PositionWidget right;
   late final PositionWidget defender;
+  late final PositionWidget goalie;
 
   final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
 
@@ -46,6 +47,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     left = PositionWidget(positions: widget.positions, pos: null);
     right = PositionWidget(positions: widget.positions, pos: null);
     defender = PositionWidget(positions: widget.positions, pos: null);
+    goalie = PositionWidget(positions: widget.positions, pos: null);
     diamondShape = {
       'top': top,
       'left': left,
@@ -141,14 +143,27 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        top,
-        Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [left, right],
+        Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/bgr_football.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(
+            children: [
+              top,
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [left, right],
+                ),
+              ),
+              defender,
+              goalie,
+            ],
           ),
         ),
-        defender,
         ElevatedButton(
           onPressed: doByte,
           child: const Text('BYTE!'),
