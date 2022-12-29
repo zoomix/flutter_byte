@@ -231,7 +231,7 @@ Future<Map<String, dynamic>> loadLastByte() async {
 
   return {
     'lastByte': lastByteStr != null
-        ? DateTime.fromMillisecondsSinceEpoch(lastByteStr!)
+        ? DateTime.fromMillisecondsSinceEpoch(lastByteStr)
         : null,
     'secondsPerByte': secondsPerByte
   };

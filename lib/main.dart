@@ -179,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       : 0);
               final nf = NumberFormat("00");
               return Text(
-                "${secsLeft < 0 ? '-' : ''}${nf.format(secsLeft ~/ 60)}:${nf.format((secsLeft < 0 ? 60 - secsLeft : secsLeft) % 60)}",
+                "${secsLeft < 0 ? '-' : ''}${nf.format(secsLeft.abs() ~/ 60)}:${nf.format((secsLeft < 0 ? 60 - secsLeft : secsLeft) % 60)}",
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -535,11 +535,13 @@ class _PlayerListState extends State<PlayerList> {
         children: widget.positions.map((position) {
           final personName = position.player.name;
           final timePlayed = position.timePlayed();
+          final doubleBooked = (positionCounts[position.pos] ?? 0) > 1;
           return ListTile(
             leading: _leading(position),
             subtitle: Text(timePlayed, style: const TextStyle(fontSize: 18)),
             title: Row(
               children: [
+                doubleBooked ? const Icon(Icons.warning) : Container(),
                 Container(
                   padding: EdgeInsets.fromLTRB(
                     0,
@@ -549,14 +551,18 @@ class _PlayerListState extends State<PlayerList> {
                   ),
                   child: Text(
                     position.player.jerseyNr,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: doubleBooked ? Colors.red : Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     personName,
-                    style: const TextStyle(fontSize: 18),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: doubleBooked ? Colors.red : Colors.black),
                     softWrap: false,
                     overflow: TextOverflow.fade,
                   ),
