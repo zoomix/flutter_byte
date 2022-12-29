@@ -360,7 +360,7 @@ class _PositionWidgetState extends State<PositionWidget> {
                   .where((position) => position.pos == widget.pos?.pos)
                   .isNotEmpty;
           final border = selected
-              ? Border.fromBorderSide(
+              ? const Border.fromBorderSide(
                   BorderSide(width: 2),
                 )
               : null;
