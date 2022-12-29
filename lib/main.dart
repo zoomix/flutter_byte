@@ -537,22 +537,21 @@ class _PlayerListState extends State<PlayerList> {
           final timePlayed = position.timePlayed();
           return ListTile(
             leading: _leading(position),
+            subtitle: Text(timePlayed, style: const TextStyle(fontSize: 18)),
             title: Row(
               children: [
-                Text(timePlayed, style: const TextStyle(fontSize: 18)),
                 Container(
-                  margin: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                  height: 32,
-                  width: 32,
-                  decoration: BoxDecoration(
-                    color: position.nextUp &&
-                            (positionCounts[position.pos] ?? 0) > 1
-                        ? Colors.red
-                        : Colors.green,
-                    shape: BoxShape.circle,
+                  padding: EdgeInsets.fromLTRB(
+                    0,
+                    0,
+                    position.player.jerseyNr.isEmpty ? 0 : 8,
+                    0,
                   ),
-                  alignment: Alignment.center,
-                  child: Text(position.player.jerseyNr),
+                  child: Text(
+                    position.player.jerseyNr,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 Expanded(
                   child: Text(
