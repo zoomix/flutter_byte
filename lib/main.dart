@@ -484,13 +484,26 @@ class _PlayerListState extends State<PlayerList> {
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         children: widget.positions.map((position) {
-          final personName = position.player.prettyName;
+          final personName = position.player.name;
           final timePlayed = position.timePlayed();
           return ListTile(
             leading: _leading(position),
-            title: Text(
-              "$timePlayed $personName",
-              style: const TextStyle(fontSize: 18),
+            title: Row(
+              children: [
+                Text(timePlayed, style: const TextStyle(fontSize: 18)),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                  height: 32,
+                  width: 32,
+                  decoration: const BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(position.player.jerseyNr),
+                ),
+                Text(personName, style: const TextStyle(fontSize: 18)),
+              ],
             ),
             trailing: _trailing(position),
           );
