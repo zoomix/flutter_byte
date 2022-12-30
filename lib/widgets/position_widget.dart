@@ -18,7 +18,7 @@ class PositionWidget extends StatefulWidget {
 
 class _PositionWidgetState extends State<PositionWidget> {
   final initalsFont = const TextStyle(
-      fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black);
   final nameFont = const TextStyle(
       fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
   final timeFont = const TextStyle(
