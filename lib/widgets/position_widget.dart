@@ -27,7 +27,7 @@ class _PositionWidgetState extends State<PositionWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: TimerBuilder.periodic(
         const Duration(seconds: 1),
         builder: (context) {
