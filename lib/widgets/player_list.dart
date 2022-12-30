@@ -22,16 +22,23 @@ class _PlayerListState extends State<PlayerList> {
   }
 
   Widget _trailing(DiamondPosition position) {
-    return IconButton(
-      onPressed: () {
-        setState(() {
-          position.togglePosition();
-        });
-      },
-      icon: Icon(
-        position.getIcon(),
-        color: Colors.red,
-        semanticLabel: "Position",
+    return Container(
+      height: 38,
+      width: 38,
+      decoration:
+          const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: (() {
+          setState(() {
+            position.togglePosition();
+          });
+        }),
+        child: Text(
+          position.prettyName,
+          style: const TextStyle(color: Colors.white),
+          softWrap: false,
+        ),
       ),
     );
   }

@@ -66,18 +66,18 @@ class DiamondPosition {
     }
   }
 
-  IconData getIcon() {
+  String get prettyName {
     switch (pos) {
       case 'top':
-        return Icons.arrow_circle_up_outlined;
+        return "F";
       case 'left':
-        return Icons.arrow_circle_left_outlined;
+        return "V";
       case 'right':
-        return Icons.arrow_circle_right_outlined;
+        return "H";
       case 'defender':
-        return Icons.arrow_circle_down_outlined;
+        return "B";
       default:
-        return Icons.arrow_circle_up_outlined;
+        return "F";
     }
   }
 }

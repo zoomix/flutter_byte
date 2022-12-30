@@ -43,31 +43,11 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   @override
   void initState() {
     super.initState();
-    top = PositionWidget(
-      positions: widget.positions,
-      pos: null,
-      prettyPos: 'F',
-    );
-    left = PositionWidget(
-      positions: widget.positions,
-      pos: null,
-      prettyPos: 'V',
-    );
-    right = PositionWidget(
-      positions: widget.positions,
-      pos: null,
-      prettyPos: 'H',
-    );
-    defender = PositionWidget(
-      positions: widget.positions,
-      pos: null,
-      prettyPos: 'B',
-    );
-    goalie = PositionWidget(
-      positions: widget.positions,
-      pos: null,
-      prettyPos: 'M',
-    );
+    top = PositionWidget(positions: widget.positions, prettyPos: 'F');
+    left = PositionWidget(positions: widget.positions, prettyPos: 'V');
+    right = PositionWidget(positions: widget.positions, prettyPos: 'H');
+    defender = PositionWidget(positions: widget.positions, prettyPos: 'B');
+    goalie = PositionWidget(positions: widget.positions, prettyPos: 'M');
     diamondShape = {
       'top': top,
       'left': left,
