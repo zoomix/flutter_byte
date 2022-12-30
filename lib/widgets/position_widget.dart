@@ -85,19 +85,18 @@ Future<void> directPlayerChange(BuildContext context,
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text('Change ${oldPosition.player.prettyName}'),
-        content: Expanded(
-          child: Column(
-            children: positions.map((position) {
-              return ListTile(
-                title: Text(position.player.prettyName),
-                trailing: Text(position.timePlayed()),
-                onTap: () {
-                  positionsMB.doByte(position, oldPosition);
-                  Navigator.of(context).pop();
-                },
-              );
-            }).toList(),
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: positions.map((position) {
+            return ListTile(
+              title: Text(position.player.prettyName),
+              trailing: Text(position.timePlayed()),
+              onTap: () {
+                positionsMB.doByte(position, oldPosition);
+                Navigator.of(context).pop();
+              },
+            );
+          }).toList(),
         ),
         actions: <Widget>[
           TextButton(
