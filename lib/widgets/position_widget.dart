@@ -58,8 +58,8 @@ class _PositionWidgetState extends State<PositionWidget> {
     final border =
         selected ? const Border.fromBorderSide(BorderSide(width: 2)) : null;
     return Container(
-      height: 32,
-      width: 32,
+      height: 36,
+      width: 36,
       decoration: BoxDecoration(
           color: Colors.white, shape: BoxShape.circle, border: border),
       alignment: Alignment.center,

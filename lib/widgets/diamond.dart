@@ -154,8 +154,10 @@ class _DiamondWidgetState extends State<DiamondWidget> {
             children: [
               top,
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [left, right],
+                children: [
+                  Expanded(flex: 1, child: left),
+                  Expanded(flex: 1, child: right),
+                ],
               ),
               defender,
               goalie,
