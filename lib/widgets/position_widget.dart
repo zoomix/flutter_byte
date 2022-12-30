@@ -5,9 +5,11 @@ import 'package:lag_byte/utils.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 class PositionWidget extends StatefulWidget {
-  PositionWidget({super.key, required this.positions, this.pos});
+  PositionWidget(
+      {super.key, required this.positions, required this.prettyPos, this.pos});
 
   final List<DiamondPosition> positions;
+  final String prettyPos;
   DiamondPosition? pos;
 
   @override
@@ -16,9 +18,11 @@ class PositionWidget extends StatefulWidget {
 
 class _PositionWidgetState extends State<PositionWidget> {
   final initalsFont = const TextStyle(
-      fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black);
-  final nameFont = const TextStyle(fontSize: 16);
-  final timeFont = const TextStyle(fontSize: 20);
+      fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black);
+  final nameFont = const TextStyle(
+      fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white);
+  final timeFont = const TextStyle(
+      fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white);
 
   @override
   Widget build(BuildContext context) {
@@ -27,52 +31,47 @@ class _PositionWidgetState extends State<PositionWidget> {
       child: TimerBuilder.periodic(
         const Duration(seconds: 1),
         builder: (context) {
-          final selected = widget.pos == null
-              ? false
-              : widget.positions
-                  .where((position) => position.nextUp)
-                  .where((position) => position.pos == widget.pos?.pos)
-                  .isNotEmpty;
-          final border = selected
-              ? const Border.fromBorderSide(
-                  BorderSide(width: 2),
-                )
-              : null;
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          return Column(
             children: [
-              Container(
-                margin: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                    border: border),
-                alignment: Alignment.center,
-                child: TextButton(
-                  onPressed: (() {
-                    directPlayerChange(context, widget.positions, widget.pos!);
-                  }),
-                  child: Text(
-                    widget.pos?.player.initials ?? '-',
-                    style: initalsFont,
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                    maxLines: 1,
-                  ),
-                ),
-              ),
+              badge(context),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(widget.pos?.player.prettyName ?? '', style: nameFont),
                   Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont),
                 ],
-              )
+              ),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Container badge(BuildContext context) {
+    final selected = widget.pos == null
+        ? false
+        : widget.positions
+            .where((position) => position.nextUp)
+            .where((position) => position.pos == widget.pos?.pos)
+            .isNotEmpty;
+    final border =
+        selected ? const Border.fromBorderSide(BorderSide(width: 2)) : null;
+    return Container(
+      height: 32,
+      width: 32,
+      decoration: BoxDecoration(
+          color: Colors.white, shape: BoxShape.circle, border: border),
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: (() {
+          directPlayerChange(context, widget.positions, widget.pos!);
+        }),
+        child: Text(
+          widget.prettyPos,
+          style: initalsFont,
+          softWrap: false,
+        ),
       ),
     );
   }
