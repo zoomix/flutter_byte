@@ -4,6 +4,7 @@ Keep track of who's played the longest and at what positions.
 
 <img src="images/screenshot.png" width="240" />
 
+See it in action at [https://zoomix.github.io/flutter_byte/](https://zoomix.github.io/flutter_byte/)
 
 ## Todo
 
