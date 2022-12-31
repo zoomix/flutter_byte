@@ -112,6 +112,7 @@ Future<void> _dialogBuilder(BuildContext context, onSave) {
       return AlertDialog(
         title: const Text('New player'),
         content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Text('Player name'),
             TextField(
