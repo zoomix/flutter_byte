@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lag_byte/edit_players.dart';
@@ -171,7 +172,16 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         actions: [
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () async {
+              var resultingDuration = await showDurationPicker(
+                context: context,
+                initialTime: Duration(minutes: secondsPerByte ~/ 60),
+              );
+              setState(() {
+                secondsPerByte = resultingDuration?.inSeconds ?? 180;
+                persistLastByte(lastByte, secondsPerByte);
+              });
+            },
             icon: const Icon(Icons.timer_sharp, color: Colors.black),
             label: TimerBuilder.periodic(const Duration(seconds: 1),
                 builder: (context) {

@@ -227,7 +227,7 @@ Future<Map<String, dynamic>> loadLastByte() async {
   SharedPreferences sp = await SharedPreferences.getInstance();
   final lastByteStr = sp.containsKey('lastByte') ? sp.getInt('lastByte') : null;
   final secondsPerByte =
-      sp.containsKey('secondsPerByte') ? sp.getInt('secondsPerByte') : null;
+      sp.containsKey('secondsPerByte') ? sp.getInt('secondsPerByte') : 180;
 
   return {
     'lastByte': lastByteStr != null
