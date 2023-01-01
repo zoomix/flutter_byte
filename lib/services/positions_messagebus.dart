@@ -26,4 +26,9 @@ class PositionsMessagebus {
   void doByte(DiamondPosition incoming, DiamondPosition outgoing) =>
       _byteSubject.add(Tuple<DiamondPosition, DiamondPosition>(
           item1: incoming, item2: outgoing));
+
+  final _triggerAlarmSubject = BehaviorSubject<int>();
+  Stream<int> get triggerAlarmStream => _triggerAlarmSubject.stream;
+  void triggerAlarm() =>
+      _triggerAlarmSubject.add(DateTime.now().millisecondsSinceEpoch);
 }

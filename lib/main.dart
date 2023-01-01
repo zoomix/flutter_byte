@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:lag_byte/edit_players.dart';
 import 'package:lag_byte/model/player.dart';
@@ -54,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DateTime? lastByte;
   int secondsPerByte = 180;
+  bool byteAlarmTriggered = false;
 
   @override
   void initState() {
@@ -74,6 +76,15 @@ class _MyHomePageState extends State<MyHomePage> {
     _positionsMB.clearAllStream.listen((ts) {
       lastByte = null;
       persistLastByte(lastByte, secondsPerByte);
+    });
+    _positionsMB.triggerAlarmStream.listen((event) {
+      byteAlarmTriggered = true;
+      final Iterable<Duration> pauses = [
+        const Duration(milliseconds: 500),
+        const Duration(milliseconds: 500),
+      ];
+// vibrate - sleep 0.5s - vibrate - sleep 1s - vibrate - sleep 0.5s - vibrate
+      Vibrate.vibrateWithPauses(pauses);
     });
     awaitedLoadPositions();
     awaitedLoadLastByte();
@@ -117,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _handleByte(DiamondPosition? incoming, DiamondPosition? outgoing) {
     setState(() {
       if (incoming != null) {
+        byteAlarmTriggered = false;
         lastByte = DateTime.now();
         persistLastByte(lastByte, secondsPerByte);
         widget.positions.remove(incoming);
@@ -189,6 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   (lastByte != null
                       ? DateTime.now().difference(lastByte!).inSeconds
                       : 0);
+              if (secsLeft <= 0 && !byteAlarmTriggered) {
+                _positionsMB.triggerAlarm();
+              }
               final nf = NumberFormat("00");
               return Text(
                 "${secsLeft < 0 ? '-' : ''}${nf.format(secsLeft.abs() ~/ 60)}:${nf.format((secsLeft < 0 ? 60 - secsLeft : secsLeft) % 60)}",

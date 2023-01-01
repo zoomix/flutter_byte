@@ -42,6 +42,7 @@ dependencies:
   rxdart: ^0.27.7
   get_it: ^7.2.0
   duration_picker: ^1.1.1
+  flutter_vibrate: ^1.3.0
 
 dev_dependencies:
   flutter_test:
