@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:lag_byte/model/player.dart';
+import 'package:lag_byte/services/notifications.dart';
 import 'package:lag_byte/services/players_messagebus.dart';
 import 'package:lag_byte/services/positions_messagebus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +18,7 @@ GetIt locator = GetIt.instance;
 void setupLocator() {
   locator.registerSingleton(PlayersMessagebus());
   locator.registerSingleton(PositionsMessagebus());
+  locator.registerSingleton(Notifications());
 }
 
 void persistPlayers(List<Player> players) {

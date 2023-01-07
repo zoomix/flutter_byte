@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:lag_byte/edit_players.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:lag_byte/model/diamond_position.dart';
+import 'package:lag_byte/services/notifications.dart';
 import 'package:lag_byte/services/players_messagebus.dart';
 import 'package:lag_byte/services/positions_messagebus.dart';
 import 'package:lag_byte/utils.dart';
@@ -47,6 +49,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final PlayersMessagebus _playersMB = locator<PlayersMessagebus>();
   final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
+  final Notifications _notifications = locator<Notifications>();
 
   late StreamSubscription<Player> playerAddStream;
   late StreamSubscription<Player> playerRemoveStream;
@@ -72,10 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _positionsMB.pauseAllStream.listen((ts) {
       lastByte = null;
       persistLastByte(lastByte, secondsPerByte);
+      _notifications.stopAllNotifications();
     });
     _positionsMB.clearAllStream.listen((ts) {
       lastByte = null;
       persistLastByte(lastByte, secondsPerByte);
+      _notifications.stopAllNotifications();
     });
     _positionsMB.triggerAlarmStream.listen((event) {
       byteAlarmTriggered = true;
@@ -132,6 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
         lastByte = DateTime.now();
         persistLastByte(lastByte, secondsPerByte);
         widget.positions.remove(incoming);
+        _notifications.notifyByte(Duration(seconds: secondsPerByte));
       }
       if (outgoing != null) {
         widget.positions.add(outgoing);
@@ -177,6 +183,11 @@ class _MyHomePageState extends State<MyHomePage> {
     persistPositions(widget.positions);
   }
 
+  int secondsLeft() {
+    return secondsPerByte -
+        (lastByte != null ? DateTime.now().difference(lastByte!).inSeconds : 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,16 +202,16 @@ class _MyHomePageState extends State<MyHomePage> {
               );
               setState(() {
                 secondsPerByte = resultingDuration?.inSeconds ?? 180;
+                if (lastByte != null) {
+                  _notifications.notifyByte(Duration(seconds: secondsLeft()));
+                }
                 persistLastByte(lastByte, secondsPerByte);
               });
             },
             icon: const Icon(Icons.timer_sharp, color: Colors.black),
             label: TimerBuilder.periodic(const Duration(seconds: 1),
                 builder: (context) {
-              int secsLeft = secondsPerByte -
-                  (lastByte != null
-                      ? DateTime.now().difference(lastByte!).inSeconds
-                      : 0);
+              int secsLeft = secondsLeft();
               if (secsLeft <= 0 && !byteAlarmTriggered) {
                 _positionsMB.triggerAlarm();
               }
