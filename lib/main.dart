@@ -76,12 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _positionsMB.pauseAllStream.listen((ts) {
       lastByte = null;
       persistLastByte(lastByte, secondsPerByte);
-      _notificationMB.reset();
+      _notificationMB.cancel();
     });
     _positionsMB.clearAllStream.listen((ts) {
       lastByte = null;
       persistLastByte(lastByte, secondsPerByte);
-      _notificationMB.reset();
+      _notificationMB.cancel();
     });
     _positionsMB.triggerAlarmStream.listen((event) {
       byteAlarmTriggered = true;
