@@ -18,7 +18,7 @@ See it in action at [https://zoomix.github.io/flutter_byte/](https://zoomix.gith
 - [x] Reset played time
 - [x] Use player jersey nr
 - [x] Replace one individual player
-- [ ] Set byte-reminder
+- [x] Set byte-reminder
 - [x] On edit page, list all Players not just Non-engaged players. 
 - [ ] Goalkeeper
 - [ ] History of positions
