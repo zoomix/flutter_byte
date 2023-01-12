@@ -232,12 +232,12 @@ class _MyHomePageState extends State<MyHomePage> {
             }),
           ),
           IconButton(
-            icon: const Icon(Icons.clear),
+            icon: const Icon(Icons.auto_delete),
             onPressed: () => _positionsMB.clearAllPosition(0),
             tooltip: 'Nollställ',
           ),
           IconButton(
-            icon: const Icon(Icons.pause),
+            icon: const Icon(Icons.stop),
             onPressed: () => _positionsMB.pauseAllPosition(0),
             tooltip: 'Matchslut',
           ),
