@@ -75,6 +75,16 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         persistPositions(widget.positions);
       });
     });
+    _positionsMB.assignGoalieStream.listen((DiamondPosition newGoalie) {
+      setState(() {
+        widget.handleByte(newGoalie, null);
+        goalie.pos = newGoalie;
+        persistActivePositions(
+            diamondShape.values.map((pw) => pw.pos).toList());
+        persistPositions(widget.positions);
+        diamondSuggestPositions(widget.positions);
+      });
+    });
     _positionsMB.clearAllStream.listen((ts) => _clearAll());
     _positionsMB.pauseAllStream.listen((ts) => _pauseAll());
     awaitedLoadActievPositions();

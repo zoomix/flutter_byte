@@ -27,6 +27,11 @@ class PositionsMessagebus {
       _byteSubject.add(Tuple<DiamondPosition, DiamondPosition>(
           item1: incoming, item2: outgoing));
 
+  final _assignGoalieSubject = BehaviorSubject<DiamondPosition>();
+  Stream<DiamondPosition> get assignGoalieStream => _assignGoalieSubject.stream;
+  void doAssignGoalie(DiamondPosition incoming) =>
+      _assignGoalieSubject.add(incoming);
+
   final _triggerAlarmSubject = BehaviorSubject<int>();
   Stream<int> get triggerAlarmStream => _triggerAlarmSubject.stream;
   void triggerAlarm() =>

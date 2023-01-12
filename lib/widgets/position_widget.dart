@@ -65,7 +65,7 @@ class _PositionWidgetState extends State<PositionWidget> {
       alignment: Alignment.center,
       child: TextButton(
         onPressed: (() {
-          directPlayerChange(context, widget.positions, widget.pos!);
+          directPlayerChange(context, widget.positions, widget.pos);
         }),
         child: Text(
           widget.prettyPos,
@@ -78,13 +78,15 @@ class _PositionWidgetState extends State<PositionWidget> {
 }
 
 Future<void> directPlayerChange(BuildContext context,
-    List<DiamondPosition> positions, DiamondPosition oldPosition) {
+    List<DiamondPosition> positions, DiamondPosition? oldPosition) {
   final PositionsMessagebus positionsMB = locator<PositionsMessagebus>();
+  final prettyName = oldPosition?.player.prettyName ?? "Målvakt";
+
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Change ${oldPosition.player.prettyName}'),
+        title: Text('Change $prettyName'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: positions.map((position) {
@@ -92,7 +94,11 @@ Future<void> directPlayerChange(BuildContext context,
               title: Text(position.player.prettyName),
               trailing: Text(position.timePlayed()),
               onTap: () {
-                positionsMB.doByte(position, oldPosition);
+                if (oldPosition != null) {
+                  positionsMB.doByte(position, oldPosition);
+                } else {
+                  positionsMB.doAssignGoalie(position);
+                }
                 Navigator.of(context).pop();
               },
             );
