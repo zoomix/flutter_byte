@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lag_byte/model/diamond_position.dart';
+import 'package:lag_byte/services/notifications.dart';
 import 'package:lag_byte/services/positions_messagebus.dart';
 import 'package:lag_byte/utils.dart';
 import 'package:lag_byte/widgets/position_widget.dart';
@@ -37,6 +38,8 @@ class _DiamondWidgetState extends State<DiamondWidget> {
   late final PositionWidget goalie;
 
   final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
+  final NotificationsMessagebus _notificationMB =
+      locator<NotificationsMessagebus>();
 
   var diamondShape = {};
 
@@ -115,6 +118,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     });
     persistActivePositions(diamondShape.values.map((pw) => pw.pos).toList());
     persistPositions(widget.positions);
+    _notificationMB.reset();
   }
 
   void _clearAll() {

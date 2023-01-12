@@ -59,7 +59,7 @@ class _ListWrapperState extends State<ListWrapper> {
         onPressed: () {
           _dialogBuilder(context, (String newName, String jerseyNr) {
             if (newName == '.') {
-              print('Bootstrapping with default users');
+              // print('Bootstrapping with default users');
               _addPlayer("Thomas Ravelli", "TR", "1");
               _addPlayer("Roland Nilsson", "RN", "2");
               _addPlayer("Patrik Andersson", "PA", "3");

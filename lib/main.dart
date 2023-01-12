@@ -48,7 +48,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final PlayersMessagebus _playersMB = locator<PlayersMessagebus>();
   final PositionsMessagebus _positionsMB = locator<PositionsMessagebus>();
-  final Notifications _notifications = locator<Notifications>();
+  // final Notifications _notifications = locator<Notifications>();
+  final NotificationsMessagebus _notificationMB =
+      locator<NotificationsMessagebus>();
 
   late StreamSubscription<Player> playerAddStream;
   late StreamSubscription<Player> playerRemoveStream;
@@ -74,12 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _positionsMB.pauseAllStream.listen((ts) {
       lastByte = null;
       persistLastByte(lastByte, secondsPerByte);
-      _notifications.stopAllNotifications();
+      _notificationMB.reset();
     });
     _positionsMB.clearAllStream.listen((ts) {
       lastByte = null;
       persistLastByte(lastByte, secondsPerByte);
-      _notifications.stopAllNotifications();
+      _notificationMB.reset();
     });
     _positionsMB.triggerAlarmStream.listen((event) {
       byteAlarmTriggered = true;
@@ -89,6 +91,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ];
 // vibrate - sleep 0.5s - vibrate - sleep 1s - vibrate - sleep 0.5s - vibrate
       Vibrate.vibrateWithPauses(pauses);
+    });
+    _notificationMB.resetStream.listen((_) {
+      if (lastByte != null) {
+        _notificationMB.notifyByte(Duration(seconds: secondsLeft()));
+      }
     });
     awaitedLoadPositions();
     awaitedLoadLastByte();
@@ -136,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
         lastByte = DateTime.now();
         persistLastByte(lastByte, secondsPerByte);
         widget.positions.remove(incoming);
-        _notifications.notifyByte(Duration(seconds: secondsPerByte));
+        _notificationMB.notifyByte(Duration(seconds: secondsPerByte));
       }
       if (outgoing != null) {
         widget.positions.add(outgoing);
@@ -202,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {
                 secondsPerByte = resultingDuration?.inSeconds ?? 180;
                 if (lastByte != null) {
-                  _notifications.notifyByte(Duration(seconds: secondsLeft()));
+                  _notificationMB.notifyByte(Duration(seconds: secondsLeft()));
                 }
                 persistLastByte(lastByte, secondsPerByte);
               });

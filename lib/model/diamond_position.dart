@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lag_byte/model/player.dart';
 import 'package:shared_preferences/shared_preferences.dart';

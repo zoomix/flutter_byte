@@ -18,6 +18,7 @@ GetIt locator = GetIt.instance;
 void setupLocator() {
   locator.registerSingleton(PlayersMessagebus());
   locator.registerSingleton(PositionsMessagebus());
+  locator.registerSingleton(NotificationsMessagebus());
   locator.registerSingleton(Notifications());
 }
 
