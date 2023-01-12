@@ -75,6 +75,8 @@ class DiamondPosition {
         return "H";
       case 'defender':
         return "B";
+      case 'goalie':
+        return "M";
       default:
         return "F";
     }

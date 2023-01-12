@@ -55,7 +55,8 @@ class _DiamondWidgetState extends State<DiamondWidget> {
       'top': top,
       'left': left,
       'right': right,
-      'defender': defender
+      'defender': defender,
+      'goalie': goalie
     };
     diamondSuggestPositions(widget.positions);
     _positionsMB.byteStream
@@ -70,17 +71,16 @@ class _DiamondWidgetState extends State<DiamondWidget> {
         positionChange.item2.togglePosition();
         diamondSuggestPositions(widget.positions);
 
-        persistActivePositions(
-            diamondShape.values.map((pw) => pw.pos).toList());
+        _persistAllActivePositions();
         persistPositions(widget.positions);
       });
     });
     _positionsMB.assignGoalieStream.listen((DiamondPosition newGoalie) {
       setState(() {
+        newGoalie.pos = 'goalie';
         widget.handleByte(newGoalie, null);
         goalie.pos = newGoalie;
-        persistActivePositions(
-            diamondShape.values.map((pw) => pw.pos).toList());
+        _persistAllActivePositions();
         persistPositions(widget.positions);
         diamondSuggestPositions(widget.positions);
       });
@@ -94,7 +94,9 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     var loadedPositions = await loadActivePositions();
     setState(() {
       for (var position in loadedPositions) {
-        if (position != null) {
+        if (position?.prettyName == 'M') {
+          goalie.pos = position;
+        } else if (position != null) {
           diamondShape[position.pos].pos = position;
         }
       }
@@ -126,7 +128,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
     setState(() {
       diamondSuggestPositions(widget.positions);
     });
-    persistActivePositions(diamondShape.values.map((pw) => pw.pos).toList());
+    _persistAllActivePositions();
     persistPositions(widget.positions);
     _notificationMB.reset();
   }
@@ -149,8 +151,17 @@ class _DiamondWidgetState extends State<DiamondWidget> {
       }
       diamondSuggestPositions(widget.positions);
     });
-    persistActivePositions([]);
+    _removeAllActivePositions();
     persistPositions(widget.positions);
+  }
+
+  void _persistAllActivePositions() {
+    final activePositions = diamondShape.values.map((pw) => pw.pos).toList();
+    persistActivePositions(activePositions);
+  }
+
+  void _removeAllActivePositions() {
+    persistActivePositions([]);
   }
 
   @override
