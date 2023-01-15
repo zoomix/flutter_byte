@@ -234,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
             }),
           ),
           IconButton(
-            icon: const Icon(Icons.auto_delete),
+            icon: const Icon(Icons.clear),
             onPressed: () => _positionsMB.clearAllPosition(0),
             tooltip: 'Nollställ',
           ),

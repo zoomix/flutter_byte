@@ -144,7 +144,7 @@ class _DiamondWidgetState extends State<DiamondWidget> {
 
   void _pauseAll() {
     setState(() {
-      for (var position in [top, left, right, defender]) {
+      for (var position in [top, left, right, defender, goalie]) {
         position.pos?.stopPlay();
         widget.handleByte(null, position.pos);
         position.pos = null;
