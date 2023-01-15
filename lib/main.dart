@@ -139,11 +139,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void _handleByte(DiamondPosition? incoming, DiamondPosition? outgoing) {
     setState(() {
       if (incoming != null) {
-        byteAlarmTriggered = false;
-        lastByte = DateTime.now();
-        persistLastByte(lastByte, secondsPerByte);
+        if (incoming.pos != 'goalie') {
+          byteAlarmTriggered = false;
+          lastByte = DateTime.now();
+          persistLastByte(lastByte, secondsPerByte);
+          _notificationMB.notifyByte(Duration(seconds: secondsPerByte));
+        }
         widget.positions.remove(incoming);
-        _notificationMB.notifyByte(Duration(seconds: secondsPerByte));
       }
       if (outgoing != null) {
         widget.positions.add(outgoing);
