@@ -42,10 +42,16 @@ class DiamondPosition {
   }
 
   void startPlay() {
+    if (pos == 'goalie') {
+      return;
+    }
     history.add(PlayEvent(type: "start", ts: DateTime.now()));
   }
 
   void stopPlay() {
+    if (pos == 'goalie') {
+      return;
+    }
     history.add(PlayEvent(type: "stop", ts: DateTime.now()));
   }
 
