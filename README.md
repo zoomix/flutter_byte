@@ -21,7 +21,7 @@ See it in action at [https://zoomix.github.io/flutter_byte/](https://zoomix.gith
 - [x] Set byte-reminder
 - [x] On edit page, list all Players not just Non-engaged players. 
 - [x] Goalkeeper
-- [ ] History of positions
+- [x] History of positions
 - [x] Outline on players about to be replaced
 - [x] Sort list of players by time played, ascending
 - [x] Warn if multiple selected players have the same position

@@ -60,10 +60,14 @@ class _PlayerListState extends State<PlayerList> {
         children: widget.positions.map((position) {
           final personName = position.player.name;
           final timePlayed = position.timePlayed();
+          final positionHistory = position.historicPositions();
+          final subHeader = positionHistory.isEmpty
+              ? timePlayed
+              : "$timePlayed - ( $positionHistory ) ";
           final doubleBooked = (positionCounts[position.pos] ?? 0) > 1;
           return ListTile(
             leading: _leading(position),
-            subtitle: Text(timePlayed, style: const TextStyle(fontSize: 18)),
+            subtitle: Text(subHeader, style: const TextStyle(fontSize: 18)),
             title: Row(
               children: [
                 doubleBooked ? const Icon(Icons.warning) : Container(),

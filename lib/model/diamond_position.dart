@@ -41,18 +41,27 @@ class DiamondPosition {
     return "${nf.format(tot ~/ 60)}:${nf.format(tot % 60)}";
   }
 
+  String historicPositions() {
+    var positions = history
+        .where((playerEvent) => playerEvent.type == 'start')
+        .map((playeEvent) => playeEvent.pos)
+        .map((playerPos) => _prettyName(playerPos));
+
+    return positions.join(', ');
+  }
+
   void startPlay() {
     if (pos == 'goalie') {
       return;
     }
-    history.add(PlayEvent(type: "start", ts: DateTime.now()));
+    history.add(PlayEvent(type: "start", ts: DateTime.now(), pos: pos));
   }
 
   void stopPlay() {
     if (pos == 'goalie') {
       return;
     }
-    history.add(PlayEvent(type: "stop", ts: DateTime.now()));
+    history.add(PlayEvent(type: "stop", ts: DateTime.now(), pos: pos));
   }
 
   void setNextUp(bool value) {
@@ -71,7 +80,9 @@ class DiamondPosition {
     }
   }
 
-  String get prettyName {
+  String get prettyName => _prettyName(pos);
+
+  String _prettyName(String pos) {
     switch (pos) {
       case 'top':
         return "F";
@@ -92,17 +103,19 @@ class DiamondPosition {
 class PlayEvent {
   final String type; // Either "start" or "stop"
   final DateTime ts;
+  final String pos;
 
-  const PlayEvent({required this.type, required this.ts});
+  const PlayEvent({required this.type, required this.ts, required this.pos});
 
   Map<String, dynamic> toMap() {
-    return {'type': type, 'ts': ts.millisecondsSinceEpoch};
+    return {'type': type, 'ts': ts.millisecondsSinceEpoch, 'pos': pos};
   }
 
   static PlayEvent fromMap(Map<String, dynamic> map) {
     return PlayEvent(
       type: map['type'],
       ts: DateTime.fromMillisecondsSinceEpoch(map['ts']),
+      pos: map['pos'] ?? '',
     );
   }
 }
