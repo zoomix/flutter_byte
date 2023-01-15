@@ -31,15 +31,19 @@ class _PositionWidgetState extends State<PositionWidget> {
       child: TimerBuilder.periodic(
         const Duration(seconds: 1),
         builder: (context) {
+          var nameAndTime = [
+            Text(widget.pos?.player.prettyName ?? '', style: nameFont),
+          ];
+          if (widget.prettyPos != 'M') {
+            nameAndTime.add(
+                Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont));
+          }
           return Column(
             children: [
               badge(context),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(widget.pos?.player.prettyName ?? '', style: nameFont),
-                  Text(widget.pos?.timePlayed() ?? '--:--', style: timeFont),
-                ],
+                children: nameAndTime,
               ),
             ],
           );
