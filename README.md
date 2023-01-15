@@ -20,13 +20,16 @@ See it in action at [https://zoomix.github.io/flutter_byte/](https://zoomix.gith
 - [x] Replace one individual player
 - [x] Set byte-reminder
 - [x] On edit page, list all Players not just Non-engaged players. 
-- [ ] Goalkeeper
+- [x] Goalkeeper
 - [ ] History of positions
 - [x] Outline on players about to be replaced
 - [x] Sort list of players by time played, ascending
 - [x] Warn if multiple selected players have the same position
 - [ ] Smarten up the suggestor
 - [ ] FireBase it for shareability.
+- [ ] Refactor: Everything is called "pos". Rename to meaningful
+- [ ] Refactor: Using strings was fun, but let's choose enums from now on. Player positions and pretty names
+- [ ] Refactor: We're doing rxdart, let's use rxdart alone. Let's not mix in providing handlers (handleByte)
 
 
 ## Icons
